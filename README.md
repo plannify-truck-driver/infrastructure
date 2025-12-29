@@ -16,17 +16,3 @@ Each ArgoCD application files are named `<environment>-<app-name>-<app-type>.yam
 Except for `argocd-applications/argocd.yaml`, which is the main ArgoCD application that deploys all other ArgoCD applications.
 
 ![ArgoCD Structure](./docs/images/argocd-structure.png)
-
-## Manual Deployment
-
-The `secrets-template/` folder contains templates for Kubernetes Secrets used in the Plannify application. You can copy this directory to create your own secrets directory.
-
-```bash
-cp -r secrets-template/ secrets/
-```
-
-Update the secrets in the `secrets/` directory and apply them to the cluster manually using `kubectl`.
-
-```bash
-kubectl apply -f secrets/
-```
