@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plannify-dev-admin-api
+  namespace: plannify-dev
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-plannify-dev
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/rewrite-target: /
+    acme.cert-manager.io/http01-edit-in-place: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: api-dev.plannify.be
+      http:
+        paths:
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: plannify-dev-admin-api
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - api-dev.plannify.be
+      secretName: dev-api-plannify-be-tls
