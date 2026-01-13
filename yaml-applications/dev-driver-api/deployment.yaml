@@ -37,20 +37,20 @@ spec:
               protocol: TCP
           startupProbe:
             httpGet:
-              path: /driver/health
+              path: /health
               port: 3001
             failureThreshold: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /driver/health
+              path: /health
               port: 3001
             failureThreshold: 3
             initialDelaySeconds: 10
             periodSeconds: 20
           readinessProbe:
             httpGet:
-              path: /driver/health
+              path: /health
               port: 3001
             initialDelaySeconds: 5
             periodSeconds: 10
