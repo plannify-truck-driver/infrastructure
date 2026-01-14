@@ -22,3 +22,5 @@ spec:
               name: dev-database-secrets
               key: DATABASE_URL
   restartPolicy: Never
+  imagePullSecrets:
+    - name: ghcr-secret
