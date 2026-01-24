@@ -25,3 +25,5 @@ spec:
               memory: "16Mi"
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: ghcr-secret
