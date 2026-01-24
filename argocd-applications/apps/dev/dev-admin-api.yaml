@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: plannify-dev-database-migation
+  name: plannify-dev-admin-api
   namespace: argocd
 spec:
   project: plannify-dev-project
   source:
     repoURL: https://github.com/plannify-truck-driver/infrastructure.git
     targetRevision: main
-    path: yaml-applications/dev-database-migrations
+    path: yaml-applications/dev/dev-admin-api
   destination:
     server: https://kubernetes.default.svc
     namespace: plannify-dev

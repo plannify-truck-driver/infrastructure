@@ -13,14 +13,14 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd-plannify-applications
+  name: plannify-applications-dev
   namespace: argocd
 spec:
-  project: default
+  project: plannify-dev-project
   source:
     repoURL: https://github.com/plannify-truck-driver/infrastructure.git
     targetRevision: main
-    path: argocd-applications/apps
+    path: argocd-applications/apps/dev
     directory:
       recurse: true
   destination:

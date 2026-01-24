@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: plannify-prod-project
+  namespace: argocd
+spec:
+  sourceRepos:
+    - https://github.com/plannify-truck-driver/infrastructure.git
+  destinations:
+    - namespace: plannify-dev
+      server: https://kubernetes.default.svc
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plannify-applications-logo
+  namespace: argocd
+spec:
+  project: plannify-prod-project
+  source:
+    repoURL: https://github.com/plannify-truck-driver/infrastructure.git
+    targetRevision: main
+    path: yaml-applications/logo
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

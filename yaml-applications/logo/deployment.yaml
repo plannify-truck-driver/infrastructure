@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plannify-image
+  namespace: plannify
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: plannify-image
+  template:
+    metadata:
+      labels:
+        app: plannify-image
+    spec:
+      containers:
+        - name: plannify-image
+          image: ghcr.io/plannify-truck-driver/logo:0.1.0
+          resources:
+            requests:
+              cpu: "1m"
+              memory: "8Mi"
+            limits:
+              cpu: "5m"
+              memory: "16Mi"
+          ports:
+            - containerPort: 80
