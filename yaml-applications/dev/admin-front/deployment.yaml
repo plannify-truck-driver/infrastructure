@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: plannify-web-admin-app
-  name: plannify-web-admin-app
+    app: plannify-dev-web-admin-app
+  name: plannify-dev-web-admin-app
   namespace: plannify-dev
 spec:
   replicas: 1
@@ -19,11 +19,11 @@ spec:
   template:
     metadata:
       labels:
-        app: plannify-web-admin-app
+        app: plannify-dev-web-admin-app
     spec:
       containers:
         - image: ghcr.io/plannify-truck-driver/web-admin-app:0.0.1-dev.100
-          name: plannify-web-admin-app
+          name: plannify-dev-web-admin-app
           imagePullPolicy: Always
           resources:
             requests:
