@@ -1,3 +1,17 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: dev-database-migration-secrets
+  namespace: plannify-dev
+spec:
+  encryptedData:
+    DATABASE_URL: AgAOKM3CvWXzYBw3aWB6wjs3Qh/z/52pkAojTW3VYQZceoOLT/pbSOQRqGJ5W4auy9B/XDYqAy2wSoueSSNvmK6ZLgcSKgTCFFOLOj7MkvjYzucnmhFUacMuAaEOG0Ih23x4pQsnGdm9GZBIWoT3bnvT1wz8lNrxc0NANVwxUiKYtTDB6MMxI/2iK1FL/OXVFHxNJP9Kq4PDjJZfmsP1sVDYtPB7Qfv2QxfBoc7O49oAFn4ro29mjy9SrJ04x+Ve3rqlRZxYdDLq6SPl//Ar3z6xR+xfoVorIrr8y5O9Em4v4xWeI6d/v4LFWXJ8QmMv9hprrbyQWm4OZwpDFKd4GIKgjWF5V8hAnHYy7QoH0tBW1D5Plnxk3QhWPjlI2dcBxcv2BKE7nm8gOog2xef8rljrg1R4KfRZaM4Id5ZNwfdA9EFDAF9J5Be9X6fjedarj7hhICkt+mY4u1xVy8uBajVA3iSU18RvdjAFcGzdz7kC6v8ga9WpH19MJSREnh32bw+TfkAZmYNwI3cHlN0zS9j5RqgUs0nGz/QUFvumV5rmbOxQ2Ca0cLtnNyq4SEZ/vVgZs7ZrWt4P1YVY/Fy1Ixffj3rbu7rsEYfaq1vMyR+1FX6hvmai2sA1eDgFIRhvkFBKUs6FEw47aNBa21IsxmhzXCxyI3evdREbcMjvJCG2Y5HM5EIGpdBX41LOIo5Dtt1nAmRW7z0o/4shIbYkdzVrFYo51WvSQ8ARPFUT8DftBum3FHdX7jkgJdYroayW3ouWuz+nHFGH5tHdqX1SmC6gHU7tE5j5f8ElPk7o8wDKnGxchCI3GEefsuvwr1KF1UK8J5/LB4cbew==
+  template:
+    metadata:
+      name: dev-database-migration-secrets
+      namespace: plannify-dev
+    type: Opaque
+---
 apiVersion: v1
 kind: Pod
 metadata:
