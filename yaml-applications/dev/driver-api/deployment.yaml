@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.0.12
+          image: ghcr.io/plannify-truck-driver/driver-api:0.0.14
           imagePullPolicy: Always
           resources:
             requests:
@@ -58,12 +58,17 @@ spec:
             - name: RUST_LOG
               value: DEBUG
             - name: ENVIRONMENT
-              value: development
+              value: production
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: dev-database-secrets
                   key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: dev-database-secrets
+                  key: REDIS_URL
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -85,11 +90,38 @@ spec:
               value: "3001"
             - name: CORS_ORIGINS
               value: "0.0.0.0/0"
+            - name: FRONTEND_URL
+              value: "https://app.dev.plannify.be"
             - name: EMAIL_DOMAIN_DENYLIST
               valueFrom:
                 secretKeyRef:
                   name: plannify-dev-driver-api
                   key: EMAIL_DOMAIN_DENYLIST
+            - name: SMTP_DEFAULT_SENDER
+              valueFrom:
+                secretKeyRef:
+                  name: dev-smtp-secrets
+                  key: SMTP_DEFAULT_SENDER
+            - name: SMTP_DEFAULT_SENDER_REPLY_TO
+              valueFrom:
+                secretKeyRef:
+                  name: dev-smtp-secrets
+                  key: SMTP_DEFAULT_SENDER_REPLY_TO
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dev-smtp-secrets
+                  key: SMTP_USERNAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dev-smtp-secrets
+                  key: SMTP_PASSWORD
+            - name: SMTP_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: dev-smtp-secrets
+                  key: SMTP_DOMAIN
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: plannify-web-admin-app
+  name: plannify-dev-web-admin-app
   namespace: plannify-dev
 spec:
   type: ClusterIP
   selector:
-    app: plannify-web-admin-app
+    app: plannify-dev-web-admin-app
   ports:
     - port: 80
       targetPort: 4173

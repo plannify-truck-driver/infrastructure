@@ -10,7 +10,7 @@ spec:
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      app: plannify-web-admin-app
+      app: plannify-dev-web-admin-app
   strategy:
     type: RollingUpdate
     rollingUpdate:
