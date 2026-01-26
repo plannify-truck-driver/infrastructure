@@ -58,7 +58,7 @@ spec:
             - name: RUST_LOG
               value: DEBUG
             - name: ENVIRONMENT
-              value: production
+              value: development
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
