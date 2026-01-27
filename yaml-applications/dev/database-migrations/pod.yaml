@@ -20,7 +20,7 @@ metadata:
 spec:
   containers:
     - name: dev-database-migrations
-      image: ghcr.io/plannify-truck-driver/common-services:0.1.9
+      image: ghcr.io/plannify-truck-driver/common-services:0.1.11
       imagePullPolicy: Always
       resources:
         requests:
