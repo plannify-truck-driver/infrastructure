@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: plannify-pdf-service
-          image: ghcr.io/plannify-truck-driver/pdf-service:0.1.3
+          image: ghcr.io/plannify-truck-driver/pdf-service:0.1.5
           imagePullPolicy: Always
           resources:
             requests:
@@ -40,8 +40,6 @@ spec:
               value: "0.0.0.0"
             - name: PORT
               value: "3000"
-            - name: WEBSITE_URL
-              value: "https://app-dev.plannify.be"
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
