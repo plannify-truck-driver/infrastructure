@@ -93,7 +93,7 @@ spec:
             - name: FRONTEND_URL
               value: "https://app.dev.plannify.be"
             - name: PDF_SERVICE_ENDPOINT
-              value: plannify-pdf-service.plannify-dev.svc.cluster.local:3000
+              value: plannify-pdf-service:3000
             - name: EMAIL_DOMAIN_DENYLIST
               valueFrom:
                 secretKeyRef:
