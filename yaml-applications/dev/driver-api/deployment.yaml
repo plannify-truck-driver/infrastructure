@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.0.26
+          image: ghcr.io/plannify-truck-driver/driver-api:0.0.27
           imagePullPolicy: Always
           resources:
             requests:
@@ -90,6 +90,8 @@ spec:
               value: "3001"
             - name: CORS_ORIGINS
               value: "0.0.0.0/0"
+            - name: RATE_LIMIT_REQUESTS_PER_SECOND
+              value: "10"
             - name: FRONTEND_URL
               value: "https://app.dev.plannify.be"
             - name: PDF_SERVICE_ENDPOINT
