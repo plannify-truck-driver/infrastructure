@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.0.27
+          image: ghcr.io/plannify-truck-driver/driver-api:0.0.28
           imagePullPolicy: Always
           resources:
             requests:
@@ -93,7 +93,7 @@ spec:
             - name: RATE_LIMIT_REQUESTS_PER_SECOND
               value: "10"
             - name: FRONTEND_URL
-              value: "https://app.dev.plannify.be"
+              value: "https://driver-dev.plannify.be"
             - name: PDF_SERVICE_ENDPOINT
               value: "http://plannify-pdf-service:3000"
             - name: EMAIL_DOMAIN_DENYLIST
