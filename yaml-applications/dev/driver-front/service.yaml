@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: plannify-dev-web-driver-app
+  namespace: plannify-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: plannify-dev-web-driver-app
+  ports:
+    - port: 80
+      targetPort: 5173
+      protocol: TCP
+      name: http
