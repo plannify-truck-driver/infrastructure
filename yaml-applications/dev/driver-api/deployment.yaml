@@ -89,7 +89,7 @@ spec:
             - name: HEALTH_PORT
               value: "3001"
             - name: CORS_ORIGINS
-              value: "0.0.0.0/0"
+              value: "driver-dev.plannify.be"
             - name: RATE_LIMIT_REQUESTS_PER_SECOND
               value: "10"
             - name: FRONTEND_URL
