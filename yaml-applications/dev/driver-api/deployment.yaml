@@ -153,7 +153,7 @@ spec:
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://tempo:4317"
+              value: "http://tempo.monitoring.svc.cluster.local:4317"
             - name: OTEL_SERVICE_NAME
               value: "plannify-dev-driver-api"
       dnsPolicy: ClusterFirst
