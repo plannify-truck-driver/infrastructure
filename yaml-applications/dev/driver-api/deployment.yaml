@@ -150,6 +150,12 @@ spec:
                 secretKeyRef:
                   name: plannify-dev-garage
                   key: S3_REGION
+            - name: OTEL_LOG_LEVEL
+              value: "debug"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://tempo:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "plannify-dev-driver-api"
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
