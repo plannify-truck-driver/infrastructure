@@ -44,12 +44,12 @@ tempo:
   resources:
     requests:
       cpu: 100m
-      memory: 100Mi
+      memory: 256Mi
     limits:
-      cpu: 200m
-      memory: 150Mi
+      cpu: 500m
+      memory: 512Mi
 
-  memBallastSizeMbs: 1024
+  memBallastSizeMbs: 128
   multitenancyEnabled: false
   # -- If true, Tempo will report anonymous usage data about the shape of a deployment to Grafana Labs
   reportingEnabled: true
@@ -96,8 +96,8 @@ tempo:
   #  complete_block_timeout: 1h
   # -- Configuration options for the querier.
   # Refers to: https://grafana.com/docs/tempo/latest/configuration/#querier
-  querier: {}
-  #  max_concurrent_queries: 20
+  querier:
+    max_concurrent_queries: 20
   # -- Configuration options for the query-fronted.
   # Refers to: https://grafana.com/docs/tempo/latest/configuration/#query-frontend
   queryFrontend: {}
@@ -128,6 +128,7 @@ tempo:
   server:
     # -- HTTP server listen port
     http_listen_port: 3200
+    grpc_server_max_concurrent_streams: 100
   # Readiness and Liveness Probe Configuration Options
   livenessProbe:
     httpGet:

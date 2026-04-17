@@ -60,6 +60,7 @@ data:
     ingester:
           {}
     server:
+          grpc_server_max_concurrent_streams: 100
           http_listen_port: 3200
     storage:
           trace:
@@ -69,7 +70,7 @@ data:
             wal:
               path: /var/tempo/wal
     querier:
-          {}
+          max_concurrent_queries: 20
     query_frontend:
           {}
     overrides:
@@ -164,14 +165,14 @@ spec:
         app.kubernetes.io/name: tempo
         app.kubernetes.io/instance: tempo
       annotations:
-        checksum/config: e355027893559c13e1618eaa52f042bb31242e72182c7df6b0596a802da35c28
+        checksum/config: 9184223338f2b5b7e4fc16062b22494ea62d77dee12cb12fe6e7a35219d5abb1
     spec:
       serviceAccountName: tempo
       automountServiceAccountToken: true
       containers:
       - args:
         - -config.file=/conf/tempo.yaml
-        - -mem-ballast-size-mbs=1024
+        - -mem-ballast-size-mbs=128
         image: docker.io/grafana/tempo:2.10.1
         imagePullPolicy: IfNotPresent
         name: tempo
@@ -220,11 +221,11 @@ spec:
             timeoutSeconds: 5
         resources:
           limits:
-            cpu: 200m
-            memory: 150Mi
+            cpu: 500m
+            memory: 512Mi
           requests:
             cpu: 100m
-            memory: 100Mi
+            memory: 256Mi
         env:
         volumeMounts:
         - mountPath: /conf
