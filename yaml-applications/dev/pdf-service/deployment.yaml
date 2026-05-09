@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: plannify-pdf-service
-          image: ghcr.io/plannify-truck-driver/pdf-service:0.1.5
+          image: ghcr.io/plannify-truck-driver/pdf-service:0.1.6
           imagePullPolicy: Always
           resources:
             requests:
