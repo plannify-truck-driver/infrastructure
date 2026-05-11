@@ -1,0 +1,214 @@
+# HELM: helm repo add garage-ui https://helm.noste.dev/
+# HELM: helm repo update
+# HELM: helm template plannify-dev-garage-ui garage-ui/garage-ui -f values.yaml --version 0.2.5 --namespace plannify-dev > manifest.yaml
+
+replicaCount: 1
+
+image:
+  repository: noooste/garage-ui
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: "plannify-dev-garage-ui"
+fullnameOverride: ""
+
+config:
+  server:
+    host: "0.0.0.0"
+    port: 8080
+    environment: "production"
+    domain: "garage-ui-dev.plannify.be"
+    protocol: "http"
+    # Full external URL (required for OIDC)
+    root_url: "https://garage-ui-dev.plannify.be"
+    # Request size limits (in bytes)
+    max_body_size: 314572800 # 300MB
+    max_header_size: 1048576 # 1MB
+    read_buffer_size: 4096 # 4KB
+    write_buffer_size: 4096 # 4KB
+
+  garage:
+    # Garage S3 API endpoint
+    endpoint: "http://garage:3900"
+    region: "garage"
+    # Garage Admin API endpoint
+    admin_endpoint: "http://garage-0.garage-headless:3903"
+    # Admin API bearer token
+    # command : kubectl exec -n plannify-dev garage-0 -- /garage admin-token create garage-ui
+    admin_token: ""
+    # Use existing secret for admin token (recommended)
+    existingSecret:
+      name: "plannify-dev-garage-ui"
+      key: "ADMIN_TOKEN"
+
+  auth:
+    # Ed25519 private key for JWT signing (PEM format)
+    # Generate with: openssl genpkey -algorithm ED25519
+    # If not provided and no existing secret is specified, a key will be auto-generated
+    # and persisted in a Kubernetes secret (recommended for production)
+    jwt_private_key: ""
+    # Use existing secret for JWT private key (optional)
+    # If not specified, the chart will auto-generate a secret on first install
+    jwt_private_key_secret:
+      name: ""
+      key: "jwt-key.pem"
+
+    # Admin authentication (username/password)
+    admin:
+      enabled: true
+      username: "admin"
+      # password: "changeme"
+      existingSecret:
+        name: "plannify-dev-garage-ui"
+        key: "ADMIN_PASSWORD"
+
+    # OIDC authentication (Keycloak, Auth0, Okta, etc.)
+    # NOTE: Requires server.root_url to be set
+    oidc:
+      enabled: false
+      provider_name: "Keycloak"
+      client_id: "garage-ui"
+      client_secret: "your-client-secret"
+      existingSecret:
+        name: ""
+        key: "client-secret"
+      scopes:
+        - openid
+        - email
+        - profile
+      # OIDC provider endpoints
+      issuer_url: "https://keycloak.example.com/realms/master"
+      # Validation settings
+      skip_issuer_check: false
+      skip_expiry_check: false
+      # User attribute mappings
+      email_attribute: "email"
+      username_attribute: "preferred_username"
+      name_attribute: "name"
+      # Role-based access control
+      role_attribute_path: "resource_access.garage-ui.roles"
+      admin_role: "admin"
+      # TLS settings
+      tls_skip_verify: false
+      # Session settings
+      session_max_age: 86400 # 24 hours
+      cookie_name: "garage_session"
+      cookie_secure: true
+      cookie_http_only: true
+      cookie_same_site: "lax"
+
+  # CORS configuration
+  cors:
+    enabled: true
+    allowed_origins:
+      - "*"
+    allowed_methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    allowed_headers:
+      - Origin
+      - Content-Type
+      - Accept
+      - Authorization
+    allow_credentials: false
+    max_age: 3600
+
+  logging:
+    # Options: debug, info, warn, error
+    level: "info"
+    # Options: json, text
+    format: "json"
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+# Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-plannify-dev
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    acme.cert-manager.io/http01-edit-in-place: "true"
+  hosts:
+    - host: garage-ui-dev.plannify.be
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: garage-ui-tls
+      hosts:
+        - garage-ui-dev.plannify.be
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# ServiceMonitor for Prometheus Operator
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  path: /api/v1/monitoring/metrics
+  labels: {}
+
+# NetworkPolicy
+networkPolicy:
+  enabled: false
+  policyTypes:
+    - Ingress
+    - Egress
+
+# Node labels for pod assignment
+nodeSelector: {}
+
+# Tolerations for pod assignment
+tolerations: []
+
+# Affinity for pod assignment
+affinity: {}
