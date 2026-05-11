@@ -3,10 +3,10 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: garage
+  name: plannify-dev-garage
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
 ---
@@ -14,22 +14,22 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: garage-rpc-secret
+  name: plannify-dev-garage-rpc-secret
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
     
 type: Opaque
 data:
-  rpcSecret: "NjcyYzk3MDY5OWFiNGJhNmVhNjhiNzI3Zjk1OTU0MjgxYzMyZmFiOTQxMjc2ZDZkMWEzZDRiMjc4YzMyMTYzZg=="
+  rpcSecret: "YjJhYmU2MmE2NTIzYWFkMDQ1ZjAxNmJjNjIwYjZiZjBkN2MxY2FkNWFkM2M2NzAzODYzZTNmYjM1MzMyY2FiNA=="
 ---
 # Source: garage/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: garage-config
+  name: plannify-dev-garage-config
 data:
   garage.toml: |-
     metadata_dir = "/mnt/meta"
@@ -51,7 +51,7 @@ data:
 
     [kubernetes_discovery]
     namespace = "plannify-dev"
-    service_name = "garage"
+    service_name = "plannify-dev-garage"
     skip_crd = false
 
     [s3_api]
@@ -71,10 +71,10 @@ data:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: manage-crds-plannify-dev-garage
+  name: manage-crds-plannify-dev-plannify-dev-garage
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
     
@@ -90,30 +90,30 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: allow-crds-for-plannify-dev-garage
+  name: allow-crds-for-plannify-dev-plannify-dev-garage
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
     
 subjects:
 - kind: ServiceAccount
-  name: garage
+  name: plannify-dev-garage
   namespace: plannify-dev
 roleRef:
   kind: ClusterRole
-  name: manage-crds-plannify-dev-garage
+  name: manage-crds-plannify-dev-plannify-dev-garage
   apiGroup: rbac.authorization.k8s.io
 ---
 # Source: garage/templates/service-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: garage-headless
+  name: plannify-dev-garage-headless
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
     
@@ -130,17 +130,17 @@ spec:
       protocol: TCP
       name: s3-web
   selector:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
 ---
 # Source: garage/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: garage
+  name: plannify-dev-garage
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
     
@@ -156,40 +156,40 @@ spec:
       protocol: TCP
       name: s3-web
   selector:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
 ---
 # Source: garage/templates/workload.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: garage
+  name: plannify-dev-garage
   labels:
-    app.kubernetes.io/name: garage
-    app.kubernetes.io/instance: garage
+    app.kubernetes.io/name: plannify-dev-garage
+    app.kubernetes.io/instance: plannify-dev-garage
     app.kubernetes.io/version: "v2.2.0"
     app.kubernetes.io/managed-by: Helm
     
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: garage
-      app.kubernetes.io/instance: garage
-  replicas: 3
-  serviceName: garage-headless
+      app.kubernetes.io/name: plannify-dev-garage
+      app.kubernetes.io/instance: plannify-dev-garage
+  replicas: 1
+  serviceName: plannify-dev-garage-headless
   podManagementPolicy: OrderedReady
   template:
     metadata:
       annotations:
-        checksum/config: 50c80d53b3a2edff1a075792511d47c26d2373ee26640ac840e0402a41fbc268
+        checksum/config: 81064b0bd49998db8f945d21399ad9d1bd1c664964feee96f20f4eb15a1bb94e
       labels:
-        app.kubernetes.io/name: garage
-        app.kubernetes.io/instance: garage
+        app.kubernetes.io/name: plannify-dev-garage
+        app.kubernetes.io/instance: plannify-dev-garage
         app.kubernetes.io/version: "v2.2.0"
         app.kubernetes.io/managed-by: Helm
         
     spec:
-      serviceAccountName: garage
+      serviceAccountName: plannify-dev-garage
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -218,7 +218,7 @@ spec:
             - name: GARAGE_RPC_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: garage-rpc-secret
+                  name: plannify-dev-garage-rpc-secret
                   key: rpcSecret
           volumeMounts:
             - name: meta
@@ -238,7 +238,7 @@ spec:
       volumes:
         - name: configmap
           configMap:
-            name: garage-config
+            name: plannify-dev-garage-config
   volumeClaimTemplates:
   - metadata:
       name: meta

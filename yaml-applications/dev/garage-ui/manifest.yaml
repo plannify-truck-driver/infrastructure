@@ -82,8 +82,8 @@ data:
       enabled: true
       max_age: 3600
     garage:
-      admin_endpoint: http://garage-0.garage-headless:3903
-      endpoint: http://garage:3900
+      admin_endpoint: http://plannify-dev-garage-0.plannify-dev-garage-headless:3903
+      endpoint: http://plannify-dev-garage:3900
       existingSecret:
         key: ADMIN_TOKEN
         name: plannify-dev-garage-ui
@@ -147,7 +147,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f3b533193689cebb3826cf8b174476c6094450fcf7ad9a38b5f7a92ea2f8af95
+        checksum/config: 67b926032fcf83de2b3cc41b2030e1cb589edf588ab928833fd0cbf6df1e0c04
       labels:
         app.kubernetes.io/name: plannify-dev-garage-ui
         app.kubernetes.io/instance: plannify-dev-garage-ui

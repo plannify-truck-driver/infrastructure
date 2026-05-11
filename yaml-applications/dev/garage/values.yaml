@@ -1,6 +1,6 @@
 # HELM: helm repo add charts-derwitt-dev https://charts.derwitt.dev
 # HELM: helm repo update
-# HELM: helm template garage charts-derwitt-dev/garage -f values.yaml --version 2.3.1 --namespace plannify-dev > manifest.yaml
+# HELM: helm template plannify-dev-garage charts-derwitt-dev/garage -f values.yaml --version 2.3.1 --namespace plannify-dev > manifest.yaml
 # HELM: kubectl apply -f manifest.yaml -n plannify-dev
 
 # -- Additional labels to add to all resources created by this chart
@@ -110,7 +110,7 @@ deployment:
   # -- Switchable to DaemonSet
   kind: StatefulSet
   # -- Number of StatefulSet replicas/garage nodes to start
-  replicaCount: 3
+  replicaCount: 1
   # -- If using statefulset, allow Parallel or OrderedReady (default)
   podManagementPolicy: OrderedReady
 
@@ -124,7 +124,7 @@ image:
 
 # -- set if you need credentials to pull your custom image
 imagePullSecrets: []
-nameOverride: ""
+nameOverride: "plannify-dev-garage"
 fullnameOverride: ""
 
 serviceAccount:
