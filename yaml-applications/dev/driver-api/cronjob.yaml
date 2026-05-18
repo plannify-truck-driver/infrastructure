@@ -6,6 +6,8 @@ metadata:
 spec:
   schedule: "0 0 * * *"
   concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
@@ -99,6 +101,8 @@ metadata:
 spec:
   schedule: "0 0 * * *"
   concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
