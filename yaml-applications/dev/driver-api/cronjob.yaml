@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.57
+              image: ghcr.io/plannify-truck-driver/driver-job:0.0.59
               args: ["delete-garbage"]
               resources:
                 requests:
@@ -109,7 +109,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.57
+              image: ghcr.io/plannify-truck-driver/driver-job:0.0.59
               args: ["generate-documents", "--months-ago", "3"]
               resources:
                 requests:

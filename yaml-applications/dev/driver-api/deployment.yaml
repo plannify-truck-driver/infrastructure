@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.0.57
+          image: ghcr.io/plannify-truck-driver/driver-api:0.0.59
           imagePullPolicy: Always
           resources:
             requests:
@@ -93,6 +93,8 @@ spec:
               value: "10"
             - name: FRONTEND_URL
               value: "https://driver-dev.plannify.be"
+            - name: SUPPORT_EMAIL
+              value: "contact@plannify.be"
             - name: PDF_SERVICE_ENDPOINT
               value: "http://plannify-pdf-service:3000"
             - name: EMAIL_DOMAIN_DENYLIST
@@ -150,6 +152,8 @@ spec:
                 secretKeyRef:
                   name: plannify-dev-garage
                   key: S3_REGION
+            - name: WORKDAY_GARBAGE_RETENTION_DAYS
+              value: "30"
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
