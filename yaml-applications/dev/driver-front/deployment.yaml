@@ -33,25 +33,25 @@ spec:
               cpu: "128m"
               memory: "512Mi"
           ports:
-            - containerPort: 5173
+            - containerPort: 80
               protocol: TCP
           startupProbe:
             httpGet:
               path: /
-              port: 5173
+              port: 80
             failureThreshold: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
-              port: 5173
+              port: 80
             failureThreshold: 3
             initialDelaySeconds: 10
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /
-              port: 5173
+              port: 80
             failureThreshold: 3
             initialDelaySeconds: 5
             periodSeconds: 10
