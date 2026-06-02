@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.0.59
+          image: ghcr.io/plannify-truck-driver/driver-api:0.0.60
           imagePullPolicy: Always
           resources:
             requests:
@@ -153,6 +153,8 @@ spec:
                   name: plannify-dev-garage
                   key: S3_REGION
             - name: WORKDAY_GARBAGE_RETENTION_DAYS
+              value: "30"
+            - name: ACCOUNT_DEACTIVATION_DAYS
               value: "30"
             - name: OTEL_LOG_LEVEL
               value: "debug"
