@@ -192,7 +192,7 @@ metadata:
   name: plannify-driver-send-monthly-reports
   namespace: plannify-dev
 spec:
-  schedule: "0 2 1 * *"
+  schedule: "0 14 1 * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 3
