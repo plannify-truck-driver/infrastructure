@@ -406,6 +406,40 @@ spec:
                     secretKeyRef:
                       name: dev-database-secrets
                       key: DATABASE_URL
+                - name: REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: dev-database-secrets
+                      key: REDIS_URL
+                - name: FRONTEND_URL
+                  value: "https://driver-dev.plannify.be"
+                - name: PDF_SERVICE_ENDPOINT
+                  value: "http://plannify-pdf-service:3000"
+                - name: SMTP_DEFAULT_SENDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: dev-smtp-secrets
+                      key: SMTP_DEFAULT_SENDER
+                - name: SMTP_DEFAULT_SENDER_REPLY_TO
+                  valueFrom:
+                    secretKeyRef:
+                      name: dev-smtp-secrets
+                      key: SMTP_DEFAULT_SENDER_REPLY_TO
+                - name: SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: dev-smtp-secrets
+                      key: SMTP_USERNAME
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: dev-smtp-secrets
+                      key: SMTP_PASSWORD
+                - name: SMTP_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      name: dev-smtp-secrets
+                      key: SMTP_DOMAIN
                 - name: S3_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
