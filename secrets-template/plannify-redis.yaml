@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: plannify-prod-redis
+  namespace: plannify
+type: Opaque
+stringData:
+  REDIS_PASSWORD: "plannify_dev"
