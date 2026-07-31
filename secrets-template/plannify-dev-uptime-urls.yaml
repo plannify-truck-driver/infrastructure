@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dev-uptime-urls
+  namespace: plannify-dev
+type: Opaque
+stringData:
+  DELETE_GARBAGE: ""
+  GENERATE_DOCUMENTS: ""
+  SEND_MONTHLY_REPORTS: ""
+  PURGE_DEACTIVATED_ACCOUNTS: ""
+  RECONCILE_DOCUMENTS: ""
