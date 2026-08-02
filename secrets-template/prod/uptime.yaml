@@ -5,8 +5,8 @@ metadata:
   namespace: plannify-2
 type: Opaque
 stringData:
-  DELETE_GARBAGE: "https://status.plannify.be/api/push/JCKqg3z8Voy1rIBwFVxghrufAxF6hxIR?status=up&msg=OK&ping="
-  GENERATE_DOCUMENTS: "https://status.plannify.be/api/push/KyDnrlI0PjNxmGuwQhO59l9zPs0zwRVU?status=up&msg=OK&ping="
-  SEND_MONTHLY_REPORTS: "https://status.plannify.be/api/push/HGbP3KtZeI9qoy8trdrwU4uQHLDIqhdn?status=up&msg=OK&ping="
-  PURGE_DEACTIVATED_ACCOUNTS: "https://status.plannify.be/api/push/qjzWoCou6DqjPQzs3C5H6pOp8PB6f8TT?status=up&msg=OK&ping="
-  RECONCILE_DOCUMENTS: "https://status.plannify.be/api/push/bCYXizs7LQDgOkx50a0NrU5uiK0C87GU?status=up&msg=OK&ping="
+  DELETE_GARBAGE: ""
+  GENERATE_DOCUMENTS: ""
+  SEND_MONTHLY_REPORTS: ""
+  PURGE_DEACTIVATED_ACCOUNTS: ""
+  RECONCILE_DOCUMENTS: ""
