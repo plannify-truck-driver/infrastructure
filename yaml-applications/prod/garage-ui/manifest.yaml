@@ -16,7 +16,7 @@ metadata:
     "helm.sh/resource-policy": keep
 type: Opaque
 data:
-  jwt-key.pem: "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1DNENBUUF3QlFZREsyVndCQ0lFSUVRRUVNK2JGMitoSUNsb05DekhTVVFkaTJTWDJ2UzRZMys4RlhIK1JSRDcKLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQo="
+  jwt-key.pem: "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1DNENBUUF3QlFZREsyVndCQ0lFSUpaL2NDdGdSMC80STdKd3NVYTlxRGpEdVpuNTg5QndqSURiKzcvZlZKZ1gKLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQo="
 ---
 # Source: garage-ui/templates/configmap.yaml
 apiVersion: v1
@@ -37,7 +37,7 @@ data:
         enabled: true
         existingSecret:
           key: ADMIN_PASSWORD
-          name: garage-ui
+          name: garage-ui-secrets
         username: admin
       oidc:
         admin_role: admin
@@ -82,11 +82,11 @@ data:
       enabled: true
       max_age: 3600
     garage:
-      admin_endpoint: http://garage-0.plannify-2-garage-headless:3903
+      admin_endpoint: http://garage-0.garage-headless:3903
       endpoint: http://garage.plannify-2:3900
       existingSecret:
         key: ADMIN_TOKEN
-        name: plannify-2-garage-ui
+        name: garage-ui-secrets
       region: garage
     logging:
       format: json
@@ -147,7 +147,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b9321f8d0f7fa279f6313f68b0a7d1a023b1fa12f7868658a34d7fd54fa69153
+        checksum/config: 3f76db3c98c56b6913b45b5de800e3df57a10fbf633c371c6b5391ce994b65b2
       labels:
         app.kubernetes.io/name: garage-ui
         app.kubernetes.io/instance: garage-ui
@@ -174,7 +174,7 @@ spec:
         - name: GARAGE_UI_GARAGE_ADMIN_TOKEN
           valueFrom:
             secretKeyRef:
-              name: plannify-2-garage-ui
+              name: garage-ui-secrets
               key: ADMIN_TOKEN
         - name: GARAGE_UI_AUTH_JWT_PRIVATE_KEY
           valueFrom:
@@ -184,7 +184,7 @@ spec:
         - name: GARAGE_UI_AUTH_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: garage-ui
+              name: garage-ui-secrets
               key: ADMIN_PASSWORD
         livenessProbe:
           httpGet:
@@ -204,11 +204,11 @@ spec:
           failureThreshold: 3
         resources:
             limits:
-              cpu: 500m
-              memory: 512Mi
+              cpu: 100m
+              memory: 256Mi
             requests:
               cpu: 100m
-              memory: 128Mi
+              memory: 256Mi
         volumeMounts:
         - name: config
           mountPath: /app/config.yaml
@@ -218,40 +218,6 @@ spec:
       - name: config
         configMap:
           name: garage-ui-config
----
-# Source: garage-ui/templates/ingress.yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: garage-ui
-  namespace: plannify-2
-  labels:
-    helm.sh/chart: garage-ui-0.2.5
-    app.kubernetes.io/name: garage-ui
-    app.kubernetes.io/instance: garage-ui
-    app.kubernetes.io/version: "v0.4.2"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-plannify
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-spec:
-  ingressClassName: traefik
-  tls:
-    - hosts:
-        - "garage-ui.plannify.be"
-      secretName: garage-ui-tls
-  rules:
-    - host: "garage-ui.plannify.be"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: garage-ui
-                port:
-                  number: 80
 ---
 # Source: garage-ui/templates/secret.yaml
 ---

@@ -8,7 +8,7 @@ image:
   repository: noooste/garage-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion
-  tag: ""
+  tag: "v0.4.2"
 
 imagePullSecrets: []
 nameOverride: "garage-ui"
@@ -34,13 +34,13 @@ config:
     endpoint: "http://garage.plannify-2:3900"
     region: "garage"
     # Garage Admin API endpoint
-    admin_endpoint: "http://garage-0.plannify-2-garage-headless:3903"
+    admin_endpoint: "http://garage-0.garage-headless:3903"
     # Admin API bearer token
     # command : kubectl exec -n plannify-2 garage-0 -- /garage admin-token create garage-ui
     admin_token: ""
     # Use existing secret for admin token (recommended)
     existingSecret:
-      name: "plannify-2-garage-ui"
+      name: "garage-ui-secrets"
       key: "ADMIN_TOKEN"
 
   auth:
@@ -61,7 +61,7 @@ config:
       username: "admin"
       # password: "changeme"
       existingSecret:
-        name: "garage-ui"
+        name: "garage-ui-secrets"
         key: "ADMIN_PASSWORD"
 
     # OIDC authentication (Keycloak, Auth0, Okta, etc.)
@@ -146,7 +146,7 @@ service:
   port: 80
 
 ingress:
-  enabled: true
+  enabled: false
   className: "traefik"
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-plannify
@@ -164,11 +164,11 @@ ingress:
 
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 100m
+    memory: 256Mi
   requests:
     cpu: 100m
-    memory: 128Mi
+    memory: 256Mi
 
 livenessProbe:
   enabled: true

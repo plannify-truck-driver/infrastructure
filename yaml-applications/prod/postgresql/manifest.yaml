@@ -184,6 +184,9 @@ spec:
                 secretKeyRef:
                   name: postgresql-secrets
                   key: POSTGRES_PASSWORD
+          envFrom:
+            - secretRef:
+                name: postgresql-secrets
           ports:
             - name: postgresql
               containerPort: 5432

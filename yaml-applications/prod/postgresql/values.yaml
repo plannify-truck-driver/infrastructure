@@ -383,7 +383,7 @@ extraEnvVars: []
   #       key: secret-key
 
 ## @param extraEnvVarsSecret Name of a secret containing additional environment variables
-extraEnvVarsSecret: ""
+extraEnvVarsSecret: "postgresql-secrets"
 
 ## @param extraVolumes Additional volumes to add to the pod
 extraVolumes: []
