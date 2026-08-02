@@ -6,4 +6,5 @@ metadata:
 type: Opaque
 stringData:
   DATABASE_URL: ""
+  OLD_DATABASE_URL: ""
   REDIS_URL: ""
