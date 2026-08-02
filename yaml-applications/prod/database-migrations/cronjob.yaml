@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: workday-migration
+  namespace: plannify-2
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: job
+              image: python:3.14-alpine
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  apk add --no-cache gcc musl-dev postgresql-dev python3-dev
+                  pip install --no-cache-dir psycopg2-binary
+                  python /scripts/migrate.py
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "128Mi"
+              env:
+                - name: PYTHONUNBUFFERED
+                  value: "1"
+                - name: DB_A_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: secret
+                      namespace: plannify
+                      key: DATABASE_URL
+                - name: DB_B_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: DATABASE_URL
+              volumeMounts:
+                - name: migration-script
+                  mountPath: /scripts
+                  readOnly: true
+          volumes:
+            - name: migration-script
+              configMap:
+                name: workday-migration-script
