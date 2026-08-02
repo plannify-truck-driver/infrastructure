@@ -25,7 +25,28 @@ spec:
       recurse: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: plannify
+    namespace: plannify-2
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plannify-applications-prod
+  namespace: argocd
+spec:
+  project: plannify-prod-project
+  source:
+    repoURL: https://github.com/plannify-truck-driver/infrastructure.git
+    targetRevision: main
+    path: argocd-applications/apps/prod
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: plannify-2
   syncPolicy:
     automated:
       prune: true

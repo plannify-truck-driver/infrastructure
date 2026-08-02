@@ -1,0 +1,534 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: driver-delete-garbage
+  namespace: plannify-2
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: job
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
+              args: ["delete-garbage"]
+              resources:
+                requests:
+                  cpu: "40m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: DATABASE_URL
+                - name: REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: REDIS_URL
+                - name: FRONTEND_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
+                - name: PDF_SERVICE_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: WORKDAY_GARBAGE_RETENTION_DAYS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: WORKDAY_GARBAGE_RETENTION_DAYS
+                - name: SMTP_DEFAULT_SENDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER
+                - name: SMTP_DEFAULT_SENDER_REPLY_TO
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER_REPLY_TO
+                - name: SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_USERNAME
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_PASSWORD
+                - name: SMTP_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DOMAIN
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: DELETE_GARBAGE
+          imagePullSecrets:
+            - name: ghcr-secret
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: driver-generate-documents
+  namespace: plannify-2
+spec:
+  schedule: "0 2 1 * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: job
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
+              args: ["generate-documents", "--months-ago", "3"]
+              resources:
+                requests:
+                  cpu: "40m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: DATABASE_URL
+                - name: REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: REDIS_URL
+                - name: FRONTEND_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
+                - name: PDF_SERVICE_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: SMTP_DEFAULT_SENDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER
+                - name: SMTP_DEFAULT_SENDER_REPLY_TO
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER_REPLY_TO
+                - name: SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_USERNAME
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_PASSWORD
+                - name: SMTP_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DOMAIN
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: GENERATE_DOCUMENTS
+          imagePullSecrets:
+            - name: ghcr-secret
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: driver-send-monthly-reports
+  namespace: plannify-2
+spec:
+  schedule: "0 14 1 * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: job
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
+              args: ["send-monthly-reports"]
+              resources:
+                requests:
+                  cpu: "40m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: DATABASE_URL
+                - name: REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: REDIS_URL
+                - name: FRONTEND_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
+                - name: PDF_SERVICE_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: SMTP_DEFAULT_SENDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER
+                - name: SMTP_DEFAULT_SENDER_REPLY_TO
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER_REPLY_TO
+                - name: SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_USERNAME
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_PASSWORD
+                - name: SMTP_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DOMAIN
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: SEND_MONTHLY_REPORTS
+          imagePullSecrets:
+            - name: ghcr-secret
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: driver-purge-deactivate-accounts
+  namespace: plannify-2
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: job
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
+              args: ["purge-deactivated-accounts"]
+              resources:
+                requests:
+                  cpu: "40m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: DATABASE_URL
+                - name: REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: REDIS_URL
+                - name: FRONTEND_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
+                - name: PDF_SERVICE_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: ACCOUNT_DEACTIVATION_DAYS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: ACCOUNT_DEACTIVATION_DAYS
+                - name: SMTP_DEFAULT_SENDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER
+                - name: SMTP_DEFAULT_SENDER_REPLY_TO
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER_REPLY_TO
+                - name: SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_USERNAME
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_PASSWORD
+                - name: SMTP_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DOMAIN
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: PURGE_DEACTIVATED_ACCOUNTS
+          imagePullSecrets:
+            - name: ghcr-secret
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: driver-reconcile-documents
+  namespace: plannify-2
+spec:
+  schedule: "0 */4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: job
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
+              args: ["reconcile-documents"]
+              resources:
+                requests:
+                  cpu: "40m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: DATABASE_URL
+                - name: REDIS_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-secrets
+                      key: REDIS_URL
+                - name: FRONTEND_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
+                - name: PDF_SERVICE_ENDPOINT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: SMTP_DEFAULT_SENDER
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER
+                - name: SMTP_DEFAULT_SENDER_REPLY_TO
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DEFAULT_SENDER_REPLY_TO
+                - name: SMTP_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_USERNAME
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_PASSWORD
+                - name: SMTP_DOMAIN
+                  valueFrom:
+                    secretKeyRef:
+                      name: smtp-secrets
+                      key: SMTP_DOMAIN
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: RECONCILE_DOCUMENTS
+          imagePullSecrets:
+            - name: ghcr-secret

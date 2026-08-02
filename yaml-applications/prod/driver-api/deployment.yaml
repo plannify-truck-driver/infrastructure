@@ -1,0 +1,185 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: driver-api
+  name: driver-api
+  namespace: plannify-2
+spec:
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: driver-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: driver-api
+    spec:
+      containers:
+        - name: driver-api
+          image: ghcr.io/plannify-truck-driver/driver-api:0.1.1
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "128Mi"
+            limits:
+              cpu: "150m"
+              memory: "128Mi"
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:
+            - name: RUST_LOG
+              value: INFO
+            - name: ENVIRONMENT
+              value: production
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: REDIS_URL
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: application-configuration-secrets
+                  key: JWT_SECRET_KEY
+            - name: JWT_ACCESS_TTL
+              valueFrom:
+                secretKeyRef:
+                  name: application-configuration-secrets
+                  key: JWT_ACCESS_TTL
+            - name: JWT_REFRESH_TTL
+              valueFrom:
+                secretKeyRef:
+                  name: application-configuration-secrets
+                  key: JWT_REFRESH_TTL
+            - name: API_PORT
+              value: "3000"
+            - name: HEALTH_PORT
+              value: "3001"
+            - name: CORS_ORIGINS
+              value: "*"
+            - name: RATE_LIMIT_REQUESTS_PER_SECOND
+              value: "100"
+            - name: FRONTEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: FRONTEND_URL
+            - name: SUPPORT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: SUPPORT_EMAIL
+            - name: PDF_SERVICE_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: PDF_SERVICE_ENDPOINT
+            - name: EMAIL_DOMAIN_DENYLIST
+              valueFrom:
+                secretKeyRef:
+                  name: application-configuration-secrets
+                  key: EMAIL_DOMAIN_DENYLIST
+            - name: SMTP_DEFAULT_SENDER
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secrets
+                  key: SMTP_DEFAULT_SENDER
+            - name: SMTP_DEFAULT_SENDER_REPLY_TO
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secrets
+                  key: SMTP_DEFAULT_SENDER_REPLY_TO
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secrets
+                  key: SMTP_USERNAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secrets
+                  key: SMTP_PASSWORD
+            - name: SMTP_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-secrets
+                  key: SMTP_DOMAIN
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: S3_ACCESS_KEY
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: S3_SECRET_KEY
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: S3_BUCKET_NAME
+            - name: S3_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: S3_ENDPOINT
+            - name: S3_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: S3_REGION
+            - name: WORKDAY_GARBAGE_RETENTION_DAYS
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: WORKDAY_GARBAGE_RETENTION_DAYS
+            - name: ACCOUNT_DEACTIVATION_DAYS
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: ACCOUNT_DEACTIVATION_DAYS
+            - name: OTEL_LOG_LEVEL
+              value: "debug"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://tempo.monitoring.svc.cluster.local:4317"
+            - name: OTEL_SERVICE_NAME
+              value: "plannify-driver-api"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: ghcr-secret

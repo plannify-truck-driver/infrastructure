@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: smtp-secrets
+  namespace: plannify-2
+type: Opaque
+stringData:
+  SMTP_DEFAULT_SENDER: ""
+  SMTP_DEFAULT_SENDER_REPLY_TO: ""
+  SMTP_USERNAME: ""
+  SMTP_PASSWORD: ""
+  SMTP_DOMAIN: ""

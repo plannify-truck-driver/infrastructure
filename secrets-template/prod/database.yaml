@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database-secrets
+  namespace: plannify-2
+type: Opaque
+stringData:
+  DATABASE_URL: ""
+  REDIS_URL: ""
