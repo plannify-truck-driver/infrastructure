@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: plannify-image
-  namespace: plannify
+  namespace: plannify-2
 spec:
   replicas: 1
   selector:
