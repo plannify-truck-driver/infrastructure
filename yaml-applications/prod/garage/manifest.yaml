@@ -23,7 +23,7 @@ metadata:
     
 type: Opaque
 data:
-  rpcSecret: "MDdkZGVlYjk1NDQ4ODMzYWQyNzE3OGVjODFkYTlhOTkzOGZkY2FhYTJkNTExNDA5ZjlmOTkzMjY2MDNkMzMyYQ=="
+  rpcSecret: "N2VlNzUxODRmYTJiYTU5ZmVlYmQyOGMwNGNlNThmN2UxYTk1ZTc0Njk4NzE4YmZlOWFhZmZlYjA0MmVmYTI3Yw=="
 ---
 # Source: garage/templates/configmap.yaml
 apiVersion: v1
@@ -244,6 +244,7 @@ spec:
       name: meta
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "local-path"
       resources:
         requests:
           storage: "100Mi"
@@ -251,6 +252,7 @@ spec:
       name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "local-path"
       resources:
         requests:
           storage: "5Gi"
