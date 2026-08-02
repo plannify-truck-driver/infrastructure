@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: plannify-pdf-service
+  name: plannify-prod-pdf-service
   namespace: argocd
 spec:
   project: plannify-prod-project
