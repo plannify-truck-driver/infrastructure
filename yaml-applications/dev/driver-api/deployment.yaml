@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:cfd7b0fce269c902513fd52091aa33a93ddf3121
+          image: ghcr.io/plannify-truck-driver/driver-api:5e5247f2f4e8c796fc2f8cef0f36acd07ba6a6d0
           imagePullPolicy: Always
           resources:
             requests:
