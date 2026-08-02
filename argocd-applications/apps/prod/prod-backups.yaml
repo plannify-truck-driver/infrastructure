@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plannify-prod-backups
+  namespace: argocd
+spec:
+  project: plannify-prod-project
+  source:
+    repoURL: https://github.com/plannify-truck-driver/infrastructure.git
+    targetRevision: main
+    path: yaml-applications/prod/backups
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: plannify-2
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

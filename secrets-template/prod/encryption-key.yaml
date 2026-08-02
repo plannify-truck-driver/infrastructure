@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: encryption-key-secrets
+  namespace: plannify-2
+type: Opaque
+stringData:
+  AGE_PUBLIC_KEY: ""

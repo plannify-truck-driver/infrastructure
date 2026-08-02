@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: database-daily-backup
+  namespace: plannify-2
+spec:
+  schedule: "30 23 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup-container
+              image: ghcr.io/baptistebronsin/postgres-backup:1.1.0
+              env:
+                - name: TZ
+                  value: "Europe/Paris"
+                - name: DB_HOST
+                  value: postgresql.plannify-2
+                - name: DB_PORT
+                  value: "5432"
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql-secrets
+                      key: POSTGRES_USER
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql-secrets
+                      key: POSTGRES_PASSWORD
+                - name: DB_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql-secrets
+                      key: POSTGRES_DB
+                - name: BACKUP_DIR
+                  value: "postgresql-database/daily"
+                - name: BACKUP_MAX_BEFORE_DELETE
+                  value: "7"
+                - name: BACKUP_COMPRESSION
+                  value: "xz"
+                - name: BACKUP_AGE_RECIPIENT
+                  valueFrom:
+                    secretKeyRef:
+                      name: encryption-key-secrets
+                      key: AGE_PUBLIC_KEY
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_ACCESS_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_ACCESS_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: STATUS_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: DAILY_DATABASE_BACKUP
+          restartPolicy: OnFailure
