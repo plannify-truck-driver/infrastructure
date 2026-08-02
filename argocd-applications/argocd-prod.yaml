@@ -46,7 +46,7 @@ spec:
       recurse: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: plannify-2
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
