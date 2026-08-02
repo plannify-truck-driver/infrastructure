@@ -27,11 +27,11 @@ data:
 
     FETCH_WORKDAY_SQL = """
         SELECT
-            fk_user_id::uuid  AS fk_driver_id,
-            date::date        AS date,
-            start::time       AS start_time,
-            "end"::time       AS end_time,
-            rest::time        AS rest_time,
+            fk_user_id::uuid                              AS fk_driver_id,
+            date::date                                     AS date,
+            (start::time + interval '2 hours')::time      AS start_time,
+            ("end"::time + interval '2 hours')::time      AS end_time,
+            (rest::time + interval '2 hours')::time       AS rest_time,
             overnight_rest
         FROM public.workday
         ORDER BY date, fk_user_id
