@@ -1,13 +1,13 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: pdf-service
+  name: web-driver-app
   namespace: plannify-2
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: pdf-service
+    name: web-driver-app
   minReplicas: 1
   maxReplicas: 3
   metrics:

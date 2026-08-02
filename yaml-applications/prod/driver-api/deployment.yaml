@@ -2,14 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: plannify-dev-driver-api
-  name: plannify-dev-driver-api
-  namespace: plannify-dev
+    app: driver-api
+  name: driver-api
+  namespace: plannify-2
 spec:
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      app: plannify-dev-driver-api
+      app: driver-api
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,16 +18,16 @@ spec:
   template:
     metadata:
       labels:
-        app: plannify-dev-driver-api
+        app: driver-api
     spec:
       containers:
-        - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.0.72
+        - name: driver-api
+          image: ghcr.io/plannify-truck-driver/driver-api:0.1.1
           imagePullPolicy: Always
           resources:
             requests:
-              cpu: "100m"
-              memory: "64Mi"
+              cpu: "150m"
+              memory: "128Mi"
             limits:
               cpu: "150m"
               memory: "128Mi"
@@ -55,113 +55,128 @@ spec:
             periodSeconds: 10
           env:
             - name: RUST_LOG
-              value: DEBUG
+              value: INFO
             - name: ENVIRONMENT
-              value: development
+              value: production
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: dev-database-secrets
+                  name: database-secrets
                   key: DATABASE_URL
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: dev-database-secrets
+                  name: database-secrets
                   key: REDIS_URL
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-driver-api
+                  name: application-configuration-secrets
                   key: JWT_SECRET_KEY
             - name: JWT_ACCESS_TTL
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-driver-api
+                  name: application-configuration-secrets
                   key: JWT_ACCESS_TTL
             - name: JWT_REFRESH_TTL
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-driver-api
+                  name: application-configuration-secrets
                   key: JWT_REFRESH_TTL
             - name: API_PORT
               value: "3000"
             - name: HEALTH_PORT
               value: "3001"
             - name: CORS_ORIGINS
-              value: "https://driver-dev.plannify.be"
+              value: "*"
             - name: RATE_LIMIT_REQUESTS_PER_SECOND
-              value: "10"
+              value: "100"
             - name: FRONTEND_URL
-              value: "https://driver-dev.plannify.be"
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: FRONTEND_URL
             - name: SUPPORT_EMAIL
-              value: "contact@plannify.be"
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: SUPPORT_EMAIL
             - name: PDF_SERVICE_ENDPOINT
-              value: "http://plannify-pdf-service:3000"
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: PDF_SERVICE_ENDPOINT
             - name: EMAIL_DOMAIN_DENYLIST
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-driver-api
+                  name: application-configuration-secrets
                   key: EMAIL_DOMAIN_DENYLIST
             - name: SMTP_DEFAULT_SENDER
               valueFrom:
                 secretKeyRef:
-                  name: dev-smtp-secrets
+                  name: smtp-secrets
                   key: SMTP_DEFAULT_SENDER
             - name: SMTP_DEFAULT_SENDER_REPLY_TO
               valueFrom:
                 secretKeyRef:
-                  name: dev-smtp-secrets
+                  name: smtp-secrets
                   key: SMTP_DEFAULT_SENDER_REPLY_TO
             - name: SMTP_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: dev-smtp-secrets
+                  name: smtp-secrets
                   key: SMTP_USERNAME
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: dev-smtp-secrets
+                  name: smtp-secrets
                   key: SMTP_PASSWORD
             - name: SMTP_DOMAIN
               valueFrom:
                 secretKeyRef:
-                  name: dev-smtp-secrets
+                  name: smtp-secrets
                   key: SMTP_DOMAIN
             - name: S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-garage
+                  name: s3-secrets
                   key: S3_ACCESS_KEY
             - name: S3_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-garage
+                  name: s3-secrets
                   key: S3_SECRET_KEY
             - name: S3_BUCKET_NAME
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-garage
+                  name: s3-secrets
                   key: S3_BUCKET_NAME
             - name: S3_ENDPOINT
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-garage
+                  name: s3-secrets
                   key: S3_ENDPOINT
             - name: S3_REGION
               valueFrom:
                 secretKeyRef:
-                  name: plannify-dev-garage
+                  name: s3-secrets
                   key: S3_REGION
             - name: WORKDAY_GARBAGE_RETENTION_DAYS
-              value: "30"
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: WORKDAY_GARBAGE_RETENTION_DAYS
             - name: ACCOUNT_DEACTIVATION_DAYS
-              value: "30"
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: ACCOUNT_DEACTIVATION_DAYS
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: "http://tempo.monitoring.svc.cluster.local:4317"
             - name: OTEL_SERVICE_NAME
-              value: "plannify-dev-driver-api"
+              value: "plannify-driver-api"
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

@@ -1,27 +1,27 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: plannify-dev-web-driver-app
-  namespace: plannify-dev
+  name: web-driver-app
+  namespace: plannify-2
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-plannify-dev
+    cert-manager.io/cluster-issuer: letsencrypt-plannify
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/rewrite-target: /
     acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
   ingressClassName: traefik
   rules:
-    - host: driver-dev.plannify.be
+    - host: driver.plannify.be
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: plannify-dev-web-driver-app
+                name: web-driver-app
                 port:
                   number: 80
   tls:
     - hosts:
-        - driver-dev.plannify.be
-      secretName: dev-web-driver-app-plannify-be-tls
+        - driver.plannify.be
+      secretName: driver-app-plannify-be-tls

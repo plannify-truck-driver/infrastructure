@@ -1,15 +1,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: plannify-dev-driver-api
-  namespace: plannify-dev
+  name: driver-api
+  namespace: plannify-2
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: plannify-dev-driver-api
+    name: driver-api
   minReplicas: 1
-  maxReplicas: 3
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:

@@ -2,15 +2,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: plannify-pdf-service
-  name: plannify-pdf-service
-  namespace: plannify-dev
+    app: pdf-service
+  name: pdf-service
+  namespace: plannify-2
 spec:
   replicas: 1
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      app: plannify-pdf-service
+      app: pdf-service
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,10 +19,10 @@ spec:
   template:
     metadata:
       labels:
-        app: plannify-pdf-service
+        app: pdf-service
     spec:
       containers:
-        - name: plannify-pdf-service
+        - name: pdf-service
           image: ghcr.io/plannify-truck-driver/pdf-service:0.1.6
           imagePullPolicy: Always
           resources:

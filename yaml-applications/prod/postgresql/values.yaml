@@ -1,7 +1,7 @@
 # FROM: https://artifacthub.io/packages/helm/bitnami/postgresql
 # HELM: helm repo add bitnami https://charts.bitnami.com/bitnami
 # HELM: helm repo update
-# TEMPLATE: helm template plannify-dev-postgresql bitnami/postgresql --version 18.2.3 --values values.yaml --namespace plannify-dev > manifest.yaml
+# TEMPLATE: helm template postgresql bitnami/postgresql --version 18.8.5 --values values.yaml --namespace plannify-2 > manifest.yaml
 
 # Copyright Broadcom, Inc. All Rights Reserved.
 # SPDX-License-Identifier: APACHE-2.0
@@ -39,18 +39,20 @@ global:
     ## @param global.postgresql.auth.secretKeys.adminPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.adminPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
     ## @param global.postgresql.auth.secretKeys.userPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.userPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
     ## @param global.postgresql.auth.secretKeys.replicationPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.replicationPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
+    ## @param global.postgresql.auth.secretKeys.metricsPasswordKey Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.metricsPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set.
     ##
-    fullnameOverride: "plannify-dev-postgresql"
+    fullnameOverride: "postgresql"
     auth:
       postgresPassword: ""
       username: ""
       password: ""
       database: ""
-      existingSecret: "plannify-dev-postgresql"
+      existingSecret: "postgresql-secrets"
       secretKeys:
         adminPasswordKey: "POSTGRES_PASSWORD"
         userPasswordKey: "POSTGRES_PASSWORD"
         replicationPasswordKey: ""
+        metricsPasswordKey: ""
     ## @param global.postgresql.service.ports.postgresql PostgreSQL service port (overrides `service.ports.postgresql`)
     ##
     service:
@@ -65,7 +67,7 @@ global:
       ## @param global.compatibility.openshift.adaptSecurityContext Adapt the securityContext sections of the deployment to make them compatible with Openshift restricted-v2 SCC: remove runAsUser, runAsGroup and fsGroup and let the platform use their allowed default IDs. Possible values: auto (apply if the detected running cluster is Openshift), force (perform the adaptation always), disabled (do not perform adaptation)
       ##
       adaptSecurityContext: auto
-  ## @param global.defaultFips Default value for the FIPS configuration (allowed values: '', restricted, relaxed, off). Can be overriden by the 'fips' object
+  ## @param global.defaultFips Default value for the FIPS configuration (allowed values: '', restricted, relaxed, off). Can be overridden by the 'fips' object
   ##  Configure FIPS mode: '', 'restricted', 'relaxed', 'off'
   ##
   defaultFips: restricted
@@ -130,7 +132,7 @@ diagnosticMode:
 image:
   registry: registry-1.docker.io
   repository: bitnami/postgresql
-  tag: latest
+  tag: sha256-86667f6fbee53e2d2f296dd8f597829418a130cf3a7c8f4b002ee570c9a12dff
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -174,17 +176,25 @@ auth:
   ## @param auth.replicationPassword Password for the replication user. Ignored if `auth.existingSecret` is provided
   ##
   replicationPassword: ""
+  ## @param auth.metricsUsername Name of the metrics user used by postgresql exporter
+  ##
+  metricsUsername: ""
+  ## @param auth.metricsPassword Password for the metrics user used by postgresql exporter. Ignored if `auth.existingSecret` is provided
+  ##
+  metricsPassword: ""
   ## @param auth.existingSecret Name of existing secret to use for PostgreSQL credentials. `auth.postgresPassword`, `auth.password`, and `auth.replicationPassword` will be ignored and picked up from this secret. The secret might also contains the key `ldap-password` if LDAP is enabled. `ldap.bind_password` will be ignored and picked from this secret in this case.
   ##
   existingSecret: ""
   ## @param auth.secretKeys.adminPasswordKey Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set.
   ## @param auth.secretKeys.userPasswordKey Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set.
   ## @param auth.secretKeys.replicationPasswordKey Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set.
+  ## @param auth.secretKeys.metricsPasswordKey Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set.
   ##
   secretKeys:
     adminPasswordKey: postgres-password
     userPasswordKey: password
     replicationPasswordKey: replication-password
+    metricsPasswordKey: metrics-password
   ## @param auth.usePasswordFiles Mount credentials as a files instead of using an environment variable
   ##
   usePasswordFiles: true
@@ -304,10 +314,10 @@ tls:
   certificatesSecret: ""
   ## @param tls.certFilename Certificate filename
   ##
-  certFilename: ""
+  certFilename: tls.crt
   ## @param tls.certKeyFilename Certificate key filename
   ##
-  certKeyFilename: ""
+  certKeyFilename: tls.key
   ## @param tls.certCAFilename CA Certificate filename
   ## If provided, PostgreSQL will authenticate TLS/SSL clients by requesting them a certificate
   ## ref: https://www.postgresql.org/docs/9.6/auth-methods.html
@@ -316,6 +326,11 @@ tls:
   ## @param tls.crlFilename File containing a Certificate Revocation List
   ##
   crlFilename: ""
+  ## @param tls.sslMode SSL mode to use when connecting to PostgreSQL. Applied to backup CronJob and password-update Job.
+  ## Accepted values: disable, allow, prefer, require, verify-ca, verify-full
+  ## ref: https://www.postgresql.org/docs/current/libpq-ssl.html
+  ##
+  sslMode: "verify-ca"
 ## @section PostgreSQL Primary parameters
 ##
 primary:
@@ -378,8 +393,15 @@ primary:
     ##
     user: ""
     ## @param primary.initdb.password Specify the PostgreSQL password to execute the initdb scripts
+    ## The password is stored in a Kubernetes Secret and injected via secretKeyRef rather than as a plaintext env value.
     ##
     password: ""
+    ## @param primary.initdb.existingSecret Name of an existing Secret containing the initdb password. The key must be specified via existingSecretKey.
+    ##
+    existingSecret: ""
+    ## @param primary.initdb.existingSecretKey Key in the existing Secret containing the initdb password.
+    ##
+    existingSecretKey: "initdb-password"
   ## Pre-init configuration
   ## ref: https://github.com/bitnami/containers/tree/main/bitnami/postgresql/#on-container-start
   preInitDb:
@@ -491,15 +513,13 @@ primary:
   resourcesPreset: "nano"
   ## @param primary.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
-  ##
-  resources: {}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
   ## @param primary.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
   ##
   fips:
@@ -732,6 +752,9 @@ primary:
   ## PostgreSQL Primary service configuration
   ##
   service:
+    ## @param primary.service.enabled Enable/disable the PostgreSQL primary service
+    ##
+    enabled: true
     ## @param primary.service.type Kubernetes Service type
     ##
     type: ClusterIP
@@ -956,15 +979,13 @@ readReplicas:
   resourcesPreset: "nano"
   ## @param readReplicas.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 2
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 3
-  ##     memory: 1024Mi
-  ##
-  resources: {}
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
   ## @param readReplicas.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
   ##
   fips:
@@ -1347,6 +1368,9 @@ backup:
     ttlSecondsAfterFinished: ""
     ## @param backup.cronjob.restartPolicy Set the cronjob parameter restartPolicy
     restartPolicy: OnFailure
+    ## @param backup.cronjob.podLabels Additional pod labels for backup cronjob pods
+    ##
+    podLabels: {}
     ## @param backup.cronjob.podSecurityContext.enabled Enable PodSecurityContext for CronJob/Backup
     ## @param backup.cronjob.podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
     ## @param backup.cronjob.podSecurityContext.sysctls Set kernel settings using the sysctl interface
@@ -1931,7 +1955,7 @@ metrics:
     ##
     labels: {}
     ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
-    ## ref: https://github.com/bitnami/charts/tree/main/bitnami/prometheus-operator#prometheus-configuration
+    ## ref: https://techdocs.broadcom.com/us/en/vmware-tanzu/bitnami-secure-images/bitnami-secure-images/services/bsi-app-doc/apps-charts-kube-prometheus-index.html#-additional-scrape-configurations
     ##
     selector: {}
     ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping

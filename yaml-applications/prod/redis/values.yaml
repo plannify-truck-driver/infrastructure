@@ -1,5 +1,5 @@
 # FROM: https://artifacthub.io/packages/helm/cloudpirates-redis/redis
-# TEMPLATE: helm template plannify-prod-redis oci://registry-1.docker.io/cloudpirates/redis --version 0.30.6 --values values.yaml --namespace plannify > manifest.yaml
+# TEMPLATE: helm template redis oci://registry-1.docker.io/cloudpirates/redis --version 0.30.6 --values values.yaml --namespace plannify-2 > manifest.yaml
 
 ## @section Global parameters
 global:
@@ -10,11 +10,11 @@ global:
 
 ## @section Common parameters
 ## @param nameOverride String to partially override redis.fullname
-nameOverride: "plannify-prod-redis"
+nameOverride: "edis"
 ## @param fullnameOverride String to fully override redis.fullname
 fullnameOverride: ""
 ## @param namespaceOverride String to override the namespace for all resources
-namespaceOverride: "plannify"
+namespaceOverride: "plannify-2"
 ## @param clusterDomain Kubernetes cluster domain
 clusterDomain: cluster.local
 ## @param commonLabels Labels to add to all deployed objects
@@ -118,7 +118,7 @@ auth:
   ## @param auth.password Redis password (if empty, random password will be generated)
   password: ""
   ## @param auth.existingSecret Name of existing secret containing Redis password
-  existingSecret: "plannify-prod-redis"
+  existingSecret: "redis-secrets"
   ## @param auth.existingSecretPasswordKey Key in existing secret containing Redis password
   existingSecretPasswordKey: "REDIS_PASSWORD"
   ## @param auth.acl Custom ACL rules to be applied. When set, all users, including the 'default' user, must be explicitly configured in the ACL file.
@@ -282,11 +282,11 @@ persistentVolumeClaimRetentionPolicy:
 ## @param resources Resource limits and requests for Redis pod
 resources:
   requests:
-    cpu: 50m
-    memory: 128Mi
+    cpu: 100m
+    memory: 256Mi
   limits:
     cpu: 100m
-    memory: 128Mi
+    memory: 256Mi
 
 ## @param nodeSelector Node selector for pod assignment
 nodeSelector: {}
@@ -364,7 +364,7 @@ readinessProbe:
 
 startupProbe:
   ## @param startupProbe.enabled Enable startup probe
-  enabled: false
+  enabled: true
   ## @param startupProbe.initialDelaySeconds Initial delay before starting probes
   initialDelaySeconds: 10
   ## @param startupProbe.periodSeconds How often to perform the probe

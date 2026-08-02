@@ -2,7 +2,7 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: driver-api-stripprefix
-  namespace: plannify-dev
+  namespace: plannify-2
 spec:
   stripPrefix:
     prefixes:
@@ -11,27 +11,27 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: plannify-dev-driver-api
-  namespace: plannify-dev
+  name: driver-api
+  namespace: plannify-2
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-plannify-dev
+    cert-manager.io/cluster-issuer: letsencrypt-plannify
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.middlewares: plannify-dev-driver-api-stripprefix@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: plannify-2-driver-api-stripprefix@kubernetescrd
     acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
   ingressClassName: traefik
   rules:
-    - host: api-dev.plannify.be
+    - host: api2.plannify.be
       http:
         paths:
           - path: /driver/v1
             pathType: Prefix
             backend:
               service:
-                name: plannify-dev-driver-api
+                name: driver-api
                 port:
                   number: 80
   tls:
     - hosts:
-        - api-dev.plannify.be
-      secretName: dev-api-plannify-be-tls
+        - api2.plannify.be
+      secretName: api-2-plannify-be-tls

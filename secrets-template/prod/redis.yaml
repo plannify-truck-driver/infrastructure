@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-secrets
+  namespace: plannify-2
+type: Opaque
+stringData:
+  REDIS_PASSWORD: "G2qlKUkKPOBdi8GTZx6fDGvNSTrXeMOUItgpb1w9"

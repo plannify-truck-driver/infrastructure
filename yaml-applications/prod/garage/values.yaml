@@ -1,7 +1,7 @@
 # HELM: helm repo add charts-derwitt-dev https://charts.derwitt.dev
 # HELM: helm repo update
-# HELM: helm template plannify-dev-garage charts-derwitt-dev/garage -f values.yaml --version 2.3.1 --namespace plannify-dev > manifest.yaml
-# HELM: kubectl apply -f manifest.yaml -n plannify-dev
+# HELM: helm template garage charts-derwitt-dev/garage -f values.yaml --version 2.3.1 --namespace plannify-2 > manifest.yaml
+# HELM: kubectl apply -f manifest.yaml -n plannify-2
 
 # -- Additional labels to add to all resources created by this chart
 commonLabels: {}
@@ -101,7 +101,7 @@ persistence:
   data:
     # -- This would classically be a "slow" storage type like HDDs
     storageClass: ~
-    size: 500Mi
+    size: 5Gi
     # used only for daemon sets
     hostPath: /var/lib/garage/data
 
@@ -124,7 +124,7 @@ image:
 
 # -- set if you need credentials to pull your custom image
 imagePullSecrets: []
-nameOverride: "plannify-dev-garage"
+nameOverride: "garage"
 fullnameOverride: ""
 
 serviceAccount:
@@ -293,10 +293,10 @@ routes:
 resources:
   # The following are indicative for a small-size deployement, for anything serious double them.
   limits:
-    cpu: 100m
+    cpu: 200m
     memory: 1024Mi
   requests:
-    cpu: 100m
+    cpu: 200m
     memory: 512Mi
 
 # -- Specifies a livenessProbe

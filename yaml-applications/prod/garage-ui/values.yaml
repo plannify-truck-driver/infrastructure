@@ -1,6 +1,6 @@
 # HELM: helm repo add garage-ui https://helm.noste.dev/
 # HELM: helm repo update
-# HELM: helm template plannify-dev-garage-ui garage-ui/garage-ui -f values.yaml --version 0.2.5 --namespace plannify-dev > manifest.yaml
+# HELM: helm template garage-ui garage-ui/garage-ui -f values.yaml --version 0.2.5 --namespace plannify-2 > manifest.yaml
 
 replicaCount: 1
 
@@ -11,7 +11,7 @@ image:
   tag: ""
 
 imagePullSecrets: []
-nameOverride: "plannify-dev-garage-ui"
+nameOverride: "garage-ui"
 fullnameOverride: ""
 
 config:
@@ -19,10 +19,10 @@ config:
     host: "0.0.0.0"
     port: 8080
     environment: "production"
-    domain: "garage-ui-dev.plannify.be"
+    domain: "garage-ui.plannify.be"
     protocol: "http"
     # Full external URL (required for OIDC)
-    root_url: "https://garage-ui-dev.plannify.be"
+    root_url: "https://garage-ui.plannify.be"
     # Request size limits (in bytes)
     max_body_size: 314572800 # 300MB
     max_header_size: 1048576 # 1MB
@@ -31,16 +31,16 @@ config:
 
   garage:
     # Garage S3 API endpoint
-    endpoint: "http://plannify-dev-garage:3900"
+    endpoint: "http://garage.plannify-2:3900"
     region: "garage"
     # Garage Admin API endpoint
-    admin_endpoint: "http://plannify-dev-garage-0.plannify-dev-garage-headless:3903"
+    admin_endpoint: "http://garage-0.plannify-2-garage-headless:3903"
     # Admin API bearer token
-    # command : kubectl exec -n plannify-dev garage-0 -- /garage admin-token create garage-ui
+    # command : kubectl exec -n plannify-2 garage-0 -- /garage admin-token create garage-ui
     admin_token: ""
     # Use existing secret for admin token (recommended)
     existingSecret:
-      name: "plannify-dev-garage-ui"
+      name: "plannify-2-garage-ui"
       key: "ADMIN_TOKEN"
 
   auth:
@@ -61,7 +61,7 @@ config:
       username: "admin"
       # password: "changeme"
       existingSecret:
-        name: "plannify-dev-garage-ui"
+        name: "garage-ui"
         key: "ADMIN_PASSWORD"
 
     # OIDC authentication (Keycloak, Auth0, Okta, etc.)
@@ -149,18 +149,18 @@ ingress:
   enabled: true
   className: "traefik"
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-plannify-dev
+    cert-manager.io/cluster-issuer: letsencrypt-plannify
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     acme.cert-manager.io/http01-edit-in-place: "true"
   hosts:
-    - host: garage-ui-dev.plannify.be
+    - host: garage-ui.plannify.be
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: garage-ui-tls
       hosts:
-        - garage-ui-dev.plannify.be
+        - garage-ui.plannify.be
 
 resources:
   limits:

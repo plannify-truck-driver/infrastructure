@@ -1,8 +1,8 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: plannify-driver-delete-garbage
-  namespace: plannify-dev
+  name: driver-delete-garbage
+  namespace: plannify-2
 spec:
   schedule: "0 2 * * *"
   concurrencyPolicy: Forbid
@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.72
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
               args: ["delete-garbage"]
               resources:
                 requests:
@@ -28,75 +28,91 @@ spec:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: DATABASE_URL
                 - name: REDIS_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: REDIS_URL
                 - name: FRONTEND_URL
-                  value: "https://driver-dev.plannify.be"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
                 - name: PDF_SERVICE_ENDPOINT
-                  value: "http://plannify-pdf-service:3000"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: WORKDAY_GARBAGE_RETENTION_DAYS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: WORKDAY_GARBAGE_RETENTION_DAYS
                 - name: SMTP_DEFAULT_SENDER
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER
                 - name: SMTP_DEFAULT_SENDER_REPLY_TO
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER_REPLY_TO
                 - name: SMTP_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_USERNAME
                 - name: SMTP_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_PASSWORD
                 - name: SMTP_DOMAIN
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DOMAIN
                 - name: S3_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ACCESS_KEY
                 - name: S3_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_SECRET_KEY
                 - name: S3_BUCKET_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_BUCKET_NAME
                 - name: S3_ENDPOINT
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ENDPOINT
                 - name: S3_REGION
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: DELETE_GARBAGE
           imagePullSecrets:
             - name: ghcr-secret
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: plannify-driver-generate-documents
-  namespace: plannify-dev
+  name: driver-generate-documents
+  namespace: plannify-2
 spec:
   schedule: "0 2 1 * *"
   concurrencyPolicy: Forbid
@@ -109,7 +125,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.72
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
               args: ["generate-documents", "--months-ago", "3"]
               resources:
                 requests:
@@ -122,75 +138,86 @@ spec:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: DATABASE_URL
                 - name: REDIS_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: REDIS_URL
                 - name: FRONTEND_URL
-                  value: "https://driver-dev.plannify.be"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
                 - name: PDF_SERVICE_ENDPOINT
-                  value: "http://plannify-pdf-service:3000"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
                 - name: SMTP_DEFAULT_SENDER
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER
                 - name: SMTP_DEFAULT_SENDER_REPLY_TO
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER_REPLY_TO
                 - name: SMTP_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_USERNAME
                 - name: SMTP_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_PASSWORD
                 - name: SMTP_DOMAIN
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DOMAIN
                 - name: S3_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ACCESS_KEY
                 - name: S3_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_SECRET_KEY
                 - name: S3_BUCKET_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_BUCKET_NAME
                 - name: S3_ENDPOINT
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ENDPOINT
                 - name: S3_REGION
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: GENERATE_DOCUMENTS
           imagePullSecrets:
             - name: ghcr-secret
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: plannify-driver-send-monthly-reports
-  namespace: plannify-dev
+  name: driver-send-monthly-reports
+  namespace: plannify-2
 spec:
   schedule: "0 14 1 * *"
   concurrencyPolicy: Forbid
@@ -203,7 +230,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.72
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
               args: ["send-monthly-reports"]
               resources:
                 requests:
@@ -216,75 +243,86 @@ spec:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: DATABASE_URL
                 - name: REDIS_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: REDIS_URL
                 - name: FRONTEND_URL
-                  value: "https://driver-dev.plannify.be"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
                 - name: PDF_SERVICE_ENDPOINT
-                  value: "http://plannify-pdf-service:3000"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
                 - name: SMTP_DEFAULT_SENDER
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER
                 - name: SMTP_DEFAULT_SENDER_REPLY_TO
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER_REPLY_TO
                 - name: SMTP_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_USERNAME
                 - name: SMTP_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_PASSWORD
                 - name: SMTP_DOMAIN
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DOMAIN
                 - name: S3_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ACCESS_KEY
                 - name: S3_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_SECRET_KEY
                 - name: S3_BUCKET_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_BUCKET_NAME
                 - name: S3_ENDPOINT
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ENDPOINT
                 - name: S3_REGION
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: SEND_MONTHLY_REPORTS
           imagePullSecrets:
             - name: ghcr-secret
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: plannify-driver-purge-deactivate-accounts
-  namespace: plannify-dev
+  name: driver-purge-deactivate-accounts
+  namespace: plannify-2
 spec:
   schedule: "0 2 * * *"
   concurrencyPolicy: Forbid
@@ -297,7 +335,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.72
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
               args: ["purge-deactivated-accounts"]
               resources:
                 requests:
@@ -310,75 +348,91 @@ spec:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: DATABASE_URL
                 - name: REDIS_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: REDIS_URL
                 - name: FRONTEND_URL
-                  value: "https://driver-dev.plannify.be"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
                 - name: PDF_SERVICE_ENDPOINT
-                  value: "http://plannify-pdf-service:3000"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
+                - name: ACCOUNT_DEACTIVATION_DAYS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: ACCOUNT_DEACTIVATION_DAYS
                 - name: SMTP_DEFAULT_SENDER
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER
                 - name: SMTP_DEFAULT_SENDER_REPLY_TO
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER_REPLY_TO
                 - name: SMTP_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_USERNAME
                 - name: SMTP_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_PASSWORD
                 - name: SMTP_DOMAIN
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DOMAIN
                 - name: S3_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ACCESS_KEY
                 - name: S3_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_SECRET_KEY
                 - name: S3_BUCKET_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_BUCKET_NAME
                 - name: S3_ENDPOINT
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ENDPOINT
                 - name: S3_REGION
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: PURGE_DEACTIVATED_ACCOUNTS
           imagePullSecrets:
             - name: ghcr-secret
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: plannify-driver-reconcile-documents
-  namespace: plannify-dev
+  name: driver-reconcile-documents
+  namespace: plannify-2
 spec:
   schedule: "0 */4 * * *"
   concurrencyPolicy: Forbid
@@ -391,7 +445,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.0.72
+              image: ghcr.io/plannify-truck-driver/driver-job:0.1.1
               args: ["reconcile-documents"]
               resources:
                 requests:
@@ -404,66 +458,77 @@ spec:
                 - name: DATABASE_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: DATABASE_URL
                 - name: REDIS_URL
                   valueFrom:
                     secretKeyRef:
-                      name: dev-database-secrets
+                      name: database-secrets
                       key: REDIS_URL
                 - name: FRONTEND_URL
-                  value: "https://driver-dev.plannify.be"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: FRONTEND_URL
                 - name: PDF_SERVICE_ENDPOINT
-                  value: "http://plannify-pdf-service:3000"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: PDF_SERVICE_ENDPOINT
                 - name: SMTP_DEFAULT_SENDER
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER
                 - name: SMTP_DEFAULT_SENDER_REPLY_TO
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DEFAULT_SENDER_REPLY_TO
                 - name: SMTP_USERNAME
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_USERNAME
                 - name: SMTP_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_PASSWORD
                 - name: SMTP_DOMAIN
                   valueFrom:
                     secretKeyRef:
-                      name: dev-smtp-secrets
+                      name: smtp-secrets
                       key: SMTP_DOMAIN
                 - name: S3_ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ACCESS_KEY
                 - name: S3_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_SECRET_KEY
                 - name: S3_BUCKET_NAME
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_BUCKET_NAME
                 - name: S3_ENDPOINT
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_ENDPOINT
                 - name: S3_REGION
                   valueFrom:
                     secretKeyRef:
-                      name: plannify-dev-garage
+                      name: s3-secrets
                       key: S3_REGION
+                - name: UPTIME_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: RECONCILE_DOCUMENTS
           imagePullSecrets:
             - name: ghcr-secret

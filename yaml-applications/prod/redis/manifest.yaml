@@ -1,34 +1,14 @@
 ---
-# Source: redis/templates/secret.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: plannify-prod-redis
-  namespace: plannify
-  labels:
-    app.kubernetes.io/instance: plannify-prod-redis
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: plannify-prod-redis
-    app.kubernetes.io/version: 8.8.0
-    helm.sh/chart: redis-0.30.6
-type: Opaque
-data:
-  redis-password: "NkszUWI1MGFLMzBYUlBzdA=="
-  host: "cGxhbm5pZnktcHJvZC1yZWRpcy5wbGFubmlmeS5zdmM="
-  port: "NjM3OQ=="
-  username: "ZGVmYXVsdA=="
-  uri: "cmVkaXM6Ly9kZWZhdWx0OjZLM1FiNTBhSzMwWFJQc3RAcGxhbm5pZnktcHJvZC1yZWRpcy5wbGFubmlmeS5zdmM6NjM3OQ=="
----
 # Source: redis/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: plannify-prod-redis-config
-  namespace: plannify
+  name: redis-config
+  namespace: plannify-2
   labels:
-    app.kubernetes.io/instance: plannify-prod-redis
+    app.kubernetes.io/instance: redis
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: plannify-prod-redis
+    app.kubernetes.io/name: edis
     app.kubernetes.io/version: 8.8.0
     helm.sh/chart: redis-0.30.6
 data:
@@ -44,12 +24,12 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: plannify-prod-redis-headless
-  namespace: plannify
+  name: redis-headless
+  namespace: plannify-2
   labels:
-    app.kubernetes.io/instance: plannify-prod-redis
+    app.kubernetes.io/instance: redis
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: plannify-prod-redis
+    app.kubernetes.io/name: edis
     app.kubernetes.io/version: 8.8.0
     helm.sh/chart: redis-0.30.6
 spec:
@@ -61,19 +41,19 @@ spec:
       protocol: TCP
       name: tcp-redis
   selector:
-    app.kubernetes.io/instance: plannify-prod-redis
-    app.kubernetes.io/name: plannify-prod-redis
+    app.kubernetes.io/instance: redis
+    app.kubernetes.io/name: edis
 ---
 # Source: redis/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: plannify-prod-redis
-  namespace: plannify
+  name: redis
+  namespace: plannify-2
   labels:
-    app.kubernetes.io/instance: plannify-prod-redis
+    app.kubernetes.io/instance: redis
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: plannify-prod-redis
+    app.kubernetes.io/name: edis
     app.kubernetes.io/version: 8.8.0
     helm.sh/chart: redis-0.30.6
 spec:
@@ -84,23 +64,23 @@ spec:
       protocol: TCP
       name: tcp-redis
   selector:
-    app.kubernetes.io/instance: plannify-prod-redis
-    app.kubernetes.io/name: plannify-prod-redis
+    app.kubernetes.io/instance: redis
+    app.kubernetes.io/name: edis
 ---
 # Source: redis/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: plannify-prod-redis
-  namespace: plannify
+  name: redis
+  namespace: plannify-2
   labels:
-    app.kubernetes.io/instance: plannify-prod-redis
+    app.kubernetes.io/instance: redis
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: plannify-prod-redis
+    app.kubernetes.io/name: edis
     app.kubernetes.io/version: 8.8.0
     helm.sh/chart: redis-0.30.6
 spec:
-  serviceName: plannify-prod-redis-headless
+  serviceName: redis-headless
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 1
@@ -109,13 +89,13 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: plannify-prod-redis
-      app.kubernetes.io/name: plannify-prod-redis
+      app.kubernetes.io/instance: redis
+      app.kubernetes.io/name: edis
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: plannify-prod-redis
-        app.kubernetes.io/name: plannify-prod-redis
+        app.kubernetes.io/instance: redis
+        app.kubernetes.io/name: edis
       annotations:
         checksum/config: 294a093cafef93d0e0b2d399b0d11a262d7f8618f7bfb84afaec0e75430a3dee
     spec:
@@ -154,13 +134,13 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: plannify-prod-redis
-                  key: redis-password
+                  name: redis-secrets
+                  key: REDIS_PASSWORD
             - name: REDISCLI_AUTH
               valueFrom:
                 secretKeyRef:
-                  name: plannify-prod-redis
-                  key: redis-password
+                  name: redis-secrets
+                  key: REDIS_PASSWORD
           livenessProbe:
             exec:
               command:
@@ -187,13 +167,26 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 6
             successThreshold: 1
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  
+                  redis-cli -h "127.0.0.1" ping
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+            successThreshold: 1
           resources:
             limits:
               cpu: 100m
-              memory: 128Mi
+              memory: 256Mi
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 100m
+              memory: 256Mi
           volumeMounts:
             - name: data
               mountPath: /data
@@ -204,5 +197,5 @@ spec:
           emptyDir: {}
         - name: config
           configMap:
-            name: plannify-prod-redis-config
+            name: redis-config
       terminationGracePeriodSeconds: 30

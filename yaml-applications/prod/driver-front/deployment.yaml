@@ -2,15 +2,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: plannify-dev-web-driver-app
-  name: plannify-dev-web-driver-app
-  namespace: plannify-dev
+    app: web-driver-app
+  name: web-driver-app
+  namespace: plannify-2
 spec:
   replicas: 1
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      app: plannify-dev-web-driver-app
+      app: web-driver-app
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -19,19 +19,19 @@ spec:
   template:
     metadata:
       labels:
-        app: plannify-dev-web-driver-app
+        app: web-driver-app
     spec:
       containers:
-        - image: ghcr.io/plannify-truck-driver/web-driver-app:bf8ebe0f68fe6bea62727e753055393499249d2a
-          name: plannify-dev-web-driver-app
+        - image: ghcr.io/plannify-truck-driver/web-driver-app:0.1.2
+          name: web-driver-app
           imagePullPolicy: Always
           resources:
             requests:
-              cpu: "92m"
+              cpu: "100m"
               memory: "256Mi"
             limits:
-              cpu: "128m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
           ports:
             - containerPort: 80
               protocol: TCP

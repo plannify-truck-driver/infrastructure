@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+  namespace: plannify-2
+data:
+  FRONTEND_URL: "https://driver.plannify.be"
+  PDF_SERVICE_ENDPOINT: "http://pdf-service:3000"
+  SUPPORT_EMAIL: "contact@plannify.be"
+
+  WORKDAY_GARBAGE_RETENTION_DAYS: "30"
+  ACCOUNT_DEACTIVATION_DAYS: "30"
