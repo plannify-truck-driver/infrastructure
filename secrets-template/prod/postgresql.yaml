@@ -5,6 +5,6 @@ metadata:
   namespace: plannify-2
 type: Opaque
 stringData:
-  POSTGRES_DB: "plannify_prod"
-  POSTGRES_USER: "plannify_user"
-  POSTGRES_PASSWORD: "8FoSGnRpGssD1R85MfKhuBVUuIJl2WTRGSsC0FF4"
+  POSTGRES_DB: ""
+  POSTGRES_USER: ""
+  POSTGRES_PASSWORD: ""

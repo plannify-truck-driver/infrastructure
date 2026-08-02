@@ -5,4 +5,4 @@ metadata:
   namespace: plannify-2
 type: Opaque
 stringData:
-  REDIS_PASSWORD: "G2qlKUkKPOBdi8GTZx6fDGvNSTrXeMOUItgpb1w9"
+  REDIS_PASSWORD: ""

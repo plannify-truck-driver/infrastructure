@@ -5,8 +5,8 @@ metadata:
   namespace: plannify-2
 type: Opaque
 stringData:
-  SMTP_DEFAULT_SENDER: "Plannify <contact@plannify.be>"
-  SMTP_DEFAULT_SENDER_REPLY_TO: "contact@plannify.be"
-  SMTP_USERNAME: "contact@plannify.be"
-  SMTP_PASSWORD: "5f6LPyYTwwveE^8VhoeY0aGgxh4B1F070y#zv7wK"
-  SMTP_DOMAIN: "mail.baptistebronsin.be"
+  SMTP_DEFAULT_SENDER: ""
+  SMTP_DEFAULT_SENDER_REPLY_TO: ""
+  SMTP_USERNAME: ""
+  SMTP_PASSWORD: ""
+  SMTP_DOMAIN: ""
