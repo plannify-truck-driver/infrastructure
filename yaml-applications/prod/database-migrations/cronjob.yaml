@@ -38,7 +38,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
-                      key: DATABASE_URL
+                      key: OLD_DATABASE_URL
                 - name: DB_B_URL
                   valueFrom:
                     secretKeyRef:
