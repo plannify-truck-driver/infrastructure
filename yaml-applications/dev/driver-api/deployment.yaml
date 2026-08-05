@@ -156,6 +156,8 @@ spec:
               value: "30"
             - name: ACCOUNT_DEACTIVATION_DAYS
               value: "30"
+            - name: WORKDAY_CREATION_LIMIT
+              value: "10"
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
