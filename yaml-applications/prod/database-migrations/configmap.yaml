@@ -42,11 +42,7 @@ data:
             (date, fk_driver_id, start_time, end_time, rest_time, overnight_rest)
         VALUES
             (%(date)s, %(fk_driver_id)s, %(start_time)s, %(end_time)s, %(rest_time)s, %(overnight_rest)s)
-        ON CONFLICT (date, fk_driver_id) DO UPDATE SET
-            start_time     = EXCLUDED.start_time,
-            end_time       = EXCLUDED.end_time,
-            rest_time      = EXCLUDED.rest_time,
-            overnight_rest = EXCLUDED.overnight_rest
+        ON CONFLICT (date, fk_driver_id) DO NOTHING
     """
 
     # ── workday_garbage ───────────────────────────────────────────────────────────
@@ -66,9 +62,7 @@ data:
             (workday_date, fk_driver_id, created_at, scheduled_deletion_date)
         VALUES
             (%(workday_date)s, %(fk_driver_id)s, %(created_at)s, %(scheduled_deletion_date)s)
-        ON CONFLICT (workday_date, fk_driver_id) DO UPDATE SET
-            created_at              = EXCLUDED.created_at,
-            scheduled_deletion_date = EXCLUDED.scheduled_deletion_date
+        ON CONFLICT (workday_date, fk_driver_id) DO NOTHING
     """
 
 
