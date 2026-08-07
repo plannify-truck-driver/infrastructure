@@ -172,7 +172,7 @@ spec:
                   name: application-configuration
                   key: ACCOUNT_DEACTIVATION_DAYS
             - name: WORKDAY_CREATION_LIMIT
-              value: 100
+              value: "100"
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
