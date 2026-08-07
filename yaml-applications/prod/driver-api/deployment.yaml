@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.1.3
+          image: ghcr.io/plannify-truck-driver/driver-api:0.2.0
           imagePullPolicy: Always
           resources:
             requests:
@@ -171,6 +171,8 @@ spec:
                 configMapKeyRef:
                   name: application-configuration
                   key: ACCOUNT_DEACTIVATION_DAYS
+            - name: WORKDAY_CREATION_LIMIT
+              value: 100
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
