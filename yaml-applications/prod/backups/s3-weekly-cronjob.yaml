@@ -14,7 +14,7 @@ spec:
         spec:
           containers:
             - name: backup-container
-              image: ghcr.io/baptistebronsin/garage-backup:0.0.5
+              image: ghcr.io/baptistebronsin/garage-backup:0.0.6
               securityContext:
                 capabilities:
                   add: ["SYS_ADMIN"]
