@@ -15,14 +15,14 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.2.0
+              image: ghcr.io/plannify-truck-driver/driver-job:0.2.1
               args: ["delete-garbage"]
               resources:
                 requests:
-                  cpu: "40m"
+                  cpu: "10m"
                   memory: "32Mi"
                 limits:
-                  cpu: "100m"
+                  cpu: "10m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -125,14 +125,14 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.2.0
+              image: ghcr.io/plannify-truck-driver/driver-job:0.2.1
               args: ["generate-documents", "--months-ago", "3"]
               resources:
                 requests:
-                  cpu: "40m"
+                  cpu: "10m"
                   memory: "32Mi"
                 limits:
-                  cpu: "100m"
+                  cpu: "10m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -230,14 +230,14 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.2.0
+              image: ghcr.io/plannify-truck-driver/driver-job:0.2.1
               args: ["send-monthly-reports"]
               resources:
                 requests:
-                  cpu: "40m"
+                  cpu: "10m"
                   memory: "32Mi"
                 limits:
-                  cpu: "100m"
+                  cpu: "10m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -335,14 +335,14 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.2.0
+              image: ghcr.io/plannify-truck-driver/driver-job:0.2.1
               args: ["purge-deactivated-accounts"]
               resources:
                 requests:
-                  cpu: "40m"
+                  cpu: "10m"
                   memory: "32Mi"
                 limits:
-                  cpu: "100m"
+                  cpu: "10m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -445,14 +445,14 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.2.0
+              image: ghcr.io/plannify-truck-driver/driver-job:0.2.1
               args: ["reconcile-documents"]
               resources:
                 requests:
-                  cpu: "40m"
+                  cpu: "10m"
                   memory: "32Mi"
                 limits:
-                  cpu: "100m"
+                  cpu: "10m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL

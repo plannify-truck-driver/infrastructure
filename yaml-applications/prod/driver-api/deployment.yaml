@@ -22,14 +22,14 @@ spec:
     spec:
       containers:
         - name: driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.2.0
+          image: ghcr.io/plannify-truck-driver/driver-api:0.2.1
           imagePullPolicy: Always
           resources:
             requests:
-              cpu: "150m"
+              cpu: "10m"
               memory: "128Mi"
             limits:
-              cpu: "150m"
+              cpu: "10m"
               memory: "128Mi"
           ports:
             - containerPort: 3000
