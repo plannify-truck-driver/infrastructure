@@ -8,7 +8,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: driver-api
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: 5
   metrics:
     - type: Resource
@@ -31,8 +31,8 @@ spec:
           value: 10
           periodSeconds: 60
     scaleUp:
-      stabilizationWindowSeconds: 60
+      stabilizationWindowSeconds: 0
       policies:
-        - type: Percent
-          value: 20
-          periodSeconds: 60
+        - type: Pods
+          value: 1
+          periodSeconds: 30
