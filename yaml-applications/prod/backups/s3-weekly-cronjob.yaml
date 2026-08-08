@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: s3-weekly-backup
+  namespace: plannify-2
+spec:
+  schedule: "0 23 * * 1"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backup-container
+              image: ghcr.io/baptistebronsin/garage-backup:0.0.1
+              resources:
+                requests:
+                  memory: "256Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "100m"
+              env:
+                - name: GARAGE_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ENDPOINT
+                - name: GARAGE_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_REGION
+                - name: GARAGE_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_ACCESS_KEY_READ_ONLY
+                - name: GARAGE_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_SECRET_KEY_READ_ONLY
+                - name: GARAGE_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_ENDPOINT
+                - name: S3_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_ACCESS_KEY
+                - name: S3_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_SECRET_KEY
+                - name: S3_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudflare-s3-secrets
+                      key: S3_BUCKET_NAME
+                - name: DEST_PATH
+                  value: "garage-s3/weekly"
+                - name: ZSTD_LEVEL
+                  value: "4"
+                - name: UPTIME_MONITORING_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: uptime-secrets
+                      key: WEEKLY_S3_BACKUP
+          restartPolicy: OnFailure
