@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: backup-container
-              image: ghcr.io/baptistebronsin/garage-backup:0.0.9
+              image: ghcr.io/baptistebronsin/garage-backup:0.1.0
               resources:
                 requests:
                   memory: "256Mi"
