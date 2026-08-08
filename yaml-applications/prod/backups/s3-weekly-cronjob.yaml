@@ -8,10 +8,17 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          annotations:
+            container.apparmor.security.beta.kubernetes.io/backup-container: unconfined
         spec:
           containers:
             - name: backup-container
               image: ghcr.io/baptistebronsin/garage-backup:0.0.3
+              securityContext:
+                capabilities:
+                  add: ["SYS_ADMIN"]
+                allowPrivilegeEscalation: true
               resources:
                 requests:
                   memory: "256Mi"
@@ -19,6 +26,9 @@ spec:
                 limits:
                   memory: "256Mi"
                   cpu: "100m"
+              volumeMounts:
+                - name: fuse
+                  mountPath: /dev/fuse
               env:
                 - name: GARAGE_ENDPOINT
                   valueFrom:
@@ -68,7 +78,7 @@ spec:
                 - name: DEST_PATH
                   value: "garage-s3/weekly"
                 - name: XZ_LEVEL
-                  value: "9"
+                  value: "6"
                 - name: UPTIME_MONITORING_URL
                   valueFrom:
                     secretKeyRef:
@@ -77,3 +87,8 @@ spec:
           restartPolicy: OnFailure
           imagePullSecrets:
             - name: ghcr-secret
+          volumes:
+            - name: fuse
+              hostPath:
+                path: /dev/fuse
+                type: CharDevice
