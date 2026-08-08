@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
             - name: backup-container
-              image: ghcr.io/baptistebronsin/garage-backup:0.0.8
+              image: ghcr.io/baptistebronsin/garage-backup:0.0.9
               resources:
                 requests:
                   memory: "256Mi"
@@ -67,6 +67,13 @@ spec:
                       key: S3_BUCKET_NAME
                 - name: DEST_PATH
                   value: "garage-s3/weekly"
+                - name: BACKUP_MAX_BEFORE_DELETE
+                  value: "12"
+                - name: BACKUP_AGE_RECIPIENT
+                  valueFrom:
+                    secretKeyRef:
+                      name: encryption-key-secrets
+                      key: AGE_PUBLIC_KEY
                 - name: XZ_LEVEL
                   value: "6"
                 - name: UPTIME_MONITORING_URL
