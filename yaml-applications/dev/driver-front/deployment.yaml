@@ -22,7 +22,7 @@ spec:
         app: plannify-dev-web-driver-app
     spec:
       containers:
-        - image: ghcr.io/plannify-truck-driver/web-driver-app:e4cf0106b7c6ed46fff991618ce5113af3ba7ed5
+        - image: ghcr.io/plannify-truck-driver/web-driver-app:10694121d21b61fd33e63b2f14e8e97c1b97404f
           name: plannify-dev-web-driver-app
           imagePullPolicy: Always
           resources:
