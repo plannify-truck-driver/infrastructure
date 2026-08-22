@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0.2.3
+          image: ghcr.io/plannify-truck-driver/driver-api:0.3.0
           imagePullPolicy: Always
           resources:
             requests:
@@ -108,6 +108,8 @@ spec:
                 configMapKeyRef:
                   name: application-configuration
                   key: PDF_SERVICE_ENDPOINT
+            - name: MAIL_TIMEZONE
+              value: "Europe/Paris"
             - name: EMAIL_DOMAIN_DENYLIST
               valueFrom:
                 secretKeyRef:
@@ -175,6 +177,11 @@ spec:
                   key: ACCOUNT_DEACTIVATION_DAYS
             - name: WORKDAY_CREATION_LIMIT
               value: "100"
+            - name: MAX_LOGIN_ATTEMPTS
+              valueFrom:
+                secretKeyRef:
+                  name: application-configuration-secrets
+                  key: MAX_LOGIN_ATTEMPTS
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT

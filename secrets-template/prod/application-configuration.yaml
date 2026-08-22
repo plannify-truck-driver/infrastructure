@@ -9,3 +9,5 @@ stringData:
   JWT_ACCESS_TTL: ""
   JWT_REFRESH_TTL: ""
   EMAIL_DOMAIN_DENYLIST: ""
+
+  MAX_LOGIN_ATTEMPTS: ""
