@@ -21,16 +21,16 @@ spec:
         app: web-driver-app
     spec:
       containers:
-        - image: ghcr.io/plannify-truck-driver/web-driver-app:0.3.0
+        - image: ghcr.io/plannify-truck-driver/web-driver-app:0.3.1
           name: web-driver-app
           imagePullPolicy: Always
           resources:
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "50m"
+              memory: "128Mi"
             limits:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "50m"
+              memory: "128Mi"
           ports:
             - containerPort: 80
               protocol: TCP
