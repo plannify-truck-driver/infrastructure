@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: old-plannify
+  namespace: plannify-2
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-plannify
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/rewrite-target: /
+    acme.cert-manager.io/http01-edit-in-place: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: app.plannify.be
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: old-plannify
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - app.plannify.be
+      secretName: old-plannify-plannify-be-tls
