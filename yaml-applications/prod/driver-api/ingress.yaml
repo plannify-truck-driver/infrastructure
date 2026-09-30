@@ -21,6 +21,16 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
+    - host: api.plannify.be
+      http:
+        paths:
+          - path: /driver/v1
+            pathType: Prefix
+            backend:
+              service:
+                name: driver-api
+                port:
+                  number: 80
     - host: api2.plannify.be
       http:
         paths:
@@ -32,6 +42,9 @@ spec:
                 port:
                   number: 80
   tls:
+    - hosts:
+        - api.plannify.be
+      secretName: api-plannify-be-tls
     - hosts:
         - api2.plannify.be
       secretName: api-2-plannify-be-tls
