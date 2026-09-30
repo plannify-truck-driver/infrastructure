@@ -126,7 +126,10 @@ spec:
           containers:
             - name: job
               image: ghcr.io/plannify-truck-driver/driver-job:0.3.3
-              args: ["generate-documents", "--months-ago", "3"]
+              args:
+                - "generate-documents"
+                - "--months-ago"
+                - "$(GENERATE_REPORTS_AFTER_MONTHS)"
               resources:
                 requests:
                   cpu: "10m"
@@ -205,6 +208,11 @@ spec:
                     secretKeyRef:
                       name: s3-secrets
                       key: S3_REGION
+                - name: GENERATE_REPORTS_AFTER_MONTHS
+                  valueFrom:
+                    configMapKeyRef:
+                      name: application-configuration
+                      key: GENERATE_REPORTS_AFTER_MONTHS
                 - name: UPTIME_URL
                   valueFrom:
                     secretKeyRef:
