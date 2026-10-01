@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.3.5
+              image: ghcr.io/plannify-truck-driver/driver-job:0.3.6
               args: ["delete-garbage"]
               resources:
                 requests:
@@ -125,7 +125,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.3.5
+              image: ghcr.io/plannify-truck-driver/driver-job:0.3.6
               args:
                 - "generate-documents"
                 - "--months-ago"
@@ -238,7 +238,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.3.5
+              image: ghcr.io/plannify-truck-driver/driver-job:0.3.6
               args: ["send-monthly-reports"]
               resources:
                 requests:
@@ -343,7 +343,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.3.5
+              image: ghcr.io/plannify-truck-driver/driver-job:0.3.6
               args: ["purge-deactivated-accounts"]
               resources:
                 requests:
@@ -453,7 +453,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.3.5
+              image: ghcr.io/plannify-truck-driver/driver-job:0.3.6
               args: ["reconcile-documents"]
               resources:
                 requests:
