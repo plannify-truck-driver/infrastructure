@@ -21,7 +21,7 @@ spec:
         app: website
     spec:
       containers:
-        - image: ghcr.io/plannify-truck-driver/website:0.1.2
+        - image: ghcr.io/plannify-truck-driver/website:0.1.3
           name: website
           imagePullPolicy: Always
           resources:
