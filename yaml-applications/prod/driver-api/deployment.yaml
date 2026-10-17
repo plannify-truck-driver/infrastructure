@@ -182,6 +182,11 @@ spec:
                 secretKeyRef:
                   name: application-configuration-secrets
                   key: MAX_LOGIN_ATTEMPTS
+            - name: DOCUMENT_GENERATION_MONTHS_AGO
+              valueFrom:
+                configMapKeyRef:
+                  name: application-configuration
+                  key: GENERATE_REPORTS_AFTER_MONTHS
             - name: OTEL_LOG_LEVEL
               value: "debug"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
