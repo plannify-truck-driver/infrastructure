@@ -6,5 +6,4 @@ metadata:
 type: Opaque
 stringData:
   DATABASE_URL: ""
-  REDIS_URL: ""
-  VALKEY_URL: ""
+  CACHE_URL: ""

@@ -69,7 +69,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: database-secrets
-                  key: VALKEY_URL
+                  key: CACHE_URL
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
