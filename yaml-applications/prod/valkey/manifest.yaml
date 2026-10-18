@@ -1,0 +1,343 @@
+---
+# Source: valkey/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: valkey
+  labels:
+    helm.sh/chart: valkey-0.12.0
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/version: "9.1.2"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: false
+
+---
+# Source: valkey/templates/init_config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valkey-init-scripts
+  labels:
+    helm.sh/chart: valkey-0.12.0
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/version: "9.1.2"
+    app.kubernetes.io/managed-by: Helm
+data:
+  init.sh: |-
+    #!/bin/sh
+    set -eu
+
+    # Default config paths
+    VALKEY_CONFIG=${VALKEY_CONFIG_PATH:-/data/conf/valkey.conf}
+
+    LOGFILE="/data/init.log"
+    DATA_DIR="/data/conf"
+
+    # Logging function (outputs to stderr and file)
+    log() {
+      echo "$(date) $1" | tee -a "$LOGFILE" >&2
+    }
+    # Function to get password for a user
+    # Usage: get_user_password <username> [password_key]
+    # Returns: password via stdout, exits with error if not found
+    get_user_password() {
+      username="$1"
+      password_key="${2:-$username}"
+      password=""
+      # Try to get password from existing secret first (priority)
+      if [ -f "/valkey-users-secret/$password_key" ]; then
+        password=$(cat "/valkey-users-secret/$password_key")
+        log "Using password from existing secret for user $username"
+      elif [ -f "/valkey-auth-secret/${username}-password" ]; then
+        # Fallback to inline password
+        password=$(cat "/valkey-auth-secret/${username}-password")
+        log "Using inline password for user $username"
+      else
+        log "ERROR: No password found for user $username"
+        return 1
+      fi
+
+      echo "$password"
+    }
+
+    # Clean old log if requested
+    if [ "${KEEP_OLD_LOGS:-false}" != "true" ]; then
+      rm -f "$LOGFILE"
+    fi
+
+    if [ -f "$LOGFILE" ]; then
+      log "Detected restart of this instance ($HOSTNAME)"
+    fi
+
+    log "Creating configuration in $DATA_DIR..."
+    mkdir -p "$DATA_DIR"
+    rm -f "$VALKEY_CONFIG"
+
+
+    # Base valkey.conf
+    log "Generating base valkey.conf"
+    {
+      echo "port 6379"
+      echo "protected-mode no"
+      echo "bind * -::*"
+      echo "dir /data"
+    } >>"$VALKEY_CONFIG"
+    # Create secure directory for ACL file
+    log "Creating /etc/valkey directory for ACL file"
+    mkdir -p /etc/valkey
+
+    # Set aclfile path in valkey.conf
+    echo "aclfile /etc/valkey/users.acl" >>"$VALKEY_CONFIG"
+
+    # Remove or reset existing ACL file if present (it may be read-only from previous run)
+    log "Preparing ACL file at /etc/valkey/users.acl"
+    if [ -f /etc/valkey/users.acl ]; then
+      log "Removing existing read-only users.acl file"
+      chmod 0600 /etc/valkey/users.acl
+      rm -f /etc/valkey/users.acl
+    fi
+
+    # Create ACL file with secure permissions
+    touch /etc/valkey/users.acl
+    chmod 0600 /etc/valkey/users.acl
+    # Generate ACL entries for each user
+    log "Generating ACL entries for users"
+
+    # User: default
+    PASSWORD=$(get_user_password "default" "VALKEY_PASSWORD") || exit 1
+
+    # Hash the password and write ACL entry
+    PASSHASH=$(echo -n "$PASSWORD" | sha256sum | cut -f 1 -d " ")
+    echo "user default on #$PASSHASH ~* &* +@all" >> /etc/valkey/users.acl
+
+    # Set final permissions
+    chmod 0400 /etc/valkey/users.acl
+    log "ACL file created with 0400 permissions"
+
+    # Append extra configs if present
+    if [ -f /usr/local/etc/valkey/valkey.conf ]; then
+      log "Appending /usr/local/etc/valkey/valkey.conf"
+      cat /usr/local/etc/valkey/valkey.conf >>"$VALKEY_CONFIG"
+    fi
+    if [ -d /extravalkeyconfigs ]; then
+      log "Appending files in /extravalkeyconfigs/"
+      cat /extravalkeyconfigs/* >>"$VALKEY_CONFIG"
+    fi
+
+
+---
+# Source: valkey/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey
+  labels:
+    helm.sh/chart: valkey-0.12.0
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/version: "9.1.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+
+---
+# Source: valkey/templates/deploy_valkey.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey
+  labels:
+    helm.sh/chart: valkey-0.12.0
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/version: "9.1.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: valkey
+      app.kubernetes.io/instance: valkey
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: valkey
+        app.kubernetes.io/instance: valkey
+      annotations:
+        checksum/initconfig: 0991cca6a1134b4ca9c8b72ea8d87a96
+    spec:
+      
+      automountServiceAccountToken: false
+      serviceAccountName: valkey
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: valkey-init
+          image: docker.io/valkey/valkey:9.1.2
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          command: [ "/scripts/init.sh" ]
+          volumeMounts:
+            - name: valkey-data
+              mountPath: /data
+            - name: scripts
+              mountPath: /scripts
+            - name: valkey-acl
+              mountPath: /etc/valkey
+            - name: valkey-users-secret
+              mountPath: /valkey-users-secret
+              readOnly: true
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      containers:
+        - name: valkey
+          image: docker.io/valkey/valkey:9.1.2
+          imagePullPolicy: IfNotPresent
+          command: [ "valkey-server" ]
+          args: [ "/data/conf/valkey.conf" ]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          env:
+            - name: VALKEY_LOG_LEVEL
+              value: "notice"
+          ports:
+            - name: tcp
+              containerPort: 6379
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+              - valkey-cli
+              - ping
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+          readinessProbe:
+            exec:
+              command:
+              - valkey-cli
+              - ping
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          startupProbe:
+            exec:
+              command:
+              - valkey-cli
+              - ping
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 50m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          volumeMounts:
+            - name: valkey-data
+              mountPath: /data
+            - name: valkey-acl
+              mountPath: /etc/valkey
+      volumes:
+        - name: scripts
+          configMap:
+            name: valkey-init-scripts
+            defaultMode: 0555
+        - name: valkey-acl
+          emptyDir:
+            medium: Memory
+        - name: valkey-users-secret
+          secret:
+            secretName: valkey-secrets
+            defaultMode: 0400
+        - name: valkey-data
+          emptyDir: {}
+---
+# Source: valkey/templates/tests/auth.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: valkey-test-auth-existing
+  labels:
+    helm.sh/chart: valkey-0.12.0
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/version: "9.1.2"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+    - name: test-auth
+      image: "docker.io/valkey/valkey:9.1.2"
+      command:
+        - sh
+        - -c
+        - |
+          set -e
+          echo "Testing authentication with usersExistingSecret..."
+          TLS_FLAGS=""
+
+          # Test basic connection (no auth - will fail if auth is properly configured)
+          PING_RESULT=$(valkey-cli -h valkey -p 6379 $TLS_FLAGS PING 2>&1 || true)
+          if [ "$PING_RESULT" = "PONG" ]; then
+            echo "✗ Authentication test failed: server allows unauthenticated access"
+            exit 1
+          fi
+
+          echo "✓ Authentication is enforced (unauthenticated access denied)"
+          echo "✓ Received expected error: $PING_RESULT"
+          echo "⚠ Manual verification recommended for usersExistingSecret configuration"
+          exit 0
+      volumeMounts:
+        - name: valkey-users-secret
+          mountPath: /valkey-users-secret
+          readOnly: true
+  volumes:
+    - name: valkey-users-secret
+      secret:
+        secretName: valkey-secrets
+
