@@ -34,7 +34,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
-                      key: REDIS_URL
+                      key: VALKEY_URL
                 - name: FRONTEND_URL
                   valueFrom:
                     configMapKeyRef:
@@ -147,7 +147,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
-                      key: REDIS_URL
+                      key: VALKEY_URL
                 - name: FRONTEND_URL
                   valueFrom:
                     configMapKeyRef:
@@ -257,7 +257,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
-                      key: REDIS_URL
+                      key: VALKEY_URL
                 - name: FRONTEND_URL
                   valueFrom:
                     configMapKeyRef:
@@ -362,7 +362,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
-                      key: REDIS_URL
+                      key: VALKEY_URL
                 - name: FRONTEND_URL
                   valueFrom:
                     configMapKeyRef:
@@ -472,7 +472,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: database-secrets
-                      key: REDIS_URL
+                      key: VALKEY_URL
                 - name: FRONTEND_URL
                   valueFrom:
                     configMapKeyRef:
