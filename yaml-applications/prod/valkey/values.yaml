@@ -99,9 +99,8 @@ networkPolicy: {}
 
 # Resource limits/requests for the main Valkey container
 resources:
-  # Example:
+  # No CPU limit: CFS throttling at 50m made exec probes time out and kill the pod
   limits:
-    cpu: 50m
     memory: 128Mi
   requests:
     cpu: 50m
@@ -128,21 +127,21 @@ startupProbe:
   enabled: true
   initialDelaySeconds: 0
   periodSeconds: 10
-  timeoutSeconds: 1
+  timeoutSeconds: 5
   failureThreshold: 3
   customProbe: {}
 livenessProbe:
   enabled: true
   initialDelaySeconds: 0
   periodSeconds: 10
-  timeoutSeconds: 1
+  timeoutSeconds: 5
   failureThreshold: 3
   customProbe: {}
 readinessProbe:
   enabled: true
   initialDelaySeconds: 0
   periodSeconds: 10
-  timeoutSeconds: 1
+  timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
   customProbe: {}
@@ -209,7 +208,12 @@ extraVolumeMounts: []
 #    name: hostpath-volume
 
 # Content for valkey.conf (will be mounted via ConfigMap)
-valkeyConfig: ""
+valkeyConfig: |
+  # Pure cache on emptyDir: no RDB snapshots (avoids periodic fork)
+  save ""
+  # Evict instead of getting OOMKilled at the 128Mi limit
+  maxmemory 100mb
+  maxmemory-policy allkeys-lru
 
 auth:
   # Enable ACL-based authentication

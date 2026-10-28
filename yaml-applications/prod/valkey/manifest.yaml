@@ -13,6 +13,27 @@ metadata:
 automountServiceAccountToken: false
 
 ---
+# Source: valkey/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valkey-config
+  labels:
+    helm.sh/chart: valkey-0.12.0
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/version: "9.1.2"
+    app.kubernetes.io/managed-by: Helm
+data:
+  valkey.conf: |
+    # Pure cache on emptyDir: no RDB snapshots (avoids periodic fork)
+    save ""
+    # Evict instead of getting OOMKilled at the 128Mi limit
+    maxmemory 100mb
+    maxmemory-policy allkeys-lru
+    
+
+---
 # Source: valkey/templates/init_config.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -178,6 +199,7 @@ spec:
         app.kubernetes.io/instance: valkey
       annotations:
         checksum/initconfig: 0991cca6a1134b4ca9c8b72ea8d87a96
+        checksum/config: d1cc1d817e9d8dff7e5c038adb5411b4
     spec:
       
       automountServiceAccountToken: false
@@ -206,6 +228,9 @@ spec:
               mountPath: /data
             - name: scripts
               mountPath: /scripts
+            - name: valkey-config
+              mountPath: /usr/local/etc/valkey/valkey.conf
+              subPath: valkey.conf
             - name: valkey-acl
               mountPath: /etc/valkey
             - name: valkey-users-secret
@@ -247,7 +272,7 @@ spec:
             failureThreshold: 3
             initialDelaySeconds: 0
             periodSeconds: 10
-            timeoutSeconds: 1
+            timeoutSeconds: 5
           readinessProbe:
             exec:
               command:
@@ -257,7 +282,7 @@ spec:
             initialDelaySeconds: 0
             periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 1
+            timeoutSeconds: 5
           startupProbe:
             exec:
               command:
@@ -266,10 +291,9 @@ spec:
             failureThreshold: 3
             initialDelaySeconds: 0
             periodSeconds: 10
-            timeoutSeconds: 1
+            timeoutSeconds: 5
           resources:
             limits:
-              cpu: 50m
               memory: 128Mi
             requests:
               cpu: 50m
@@ -287,6 +311,9 @@ spec:
         - name: valkey-acl
           emptyDir:
             medium: Memory
+        - name: valkey-config
+          configMap:
+            name: valkey-config
         - name: valkey-users-secret
           secret:
             secretName: valkey-secrets
