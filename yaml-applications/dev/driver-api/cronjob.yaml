@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:055524b450a0c4ac9a6d8de955661c8a04f5dcd2
+              image: ghcr.io/plannify-truck-driver/driver-job:e1589c18a057ffef67afa580f309fd355293f836
               args: ["delete-garbage"]
               resources:
                 requests:
@@ -114,7 +114,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:055524b450a0c4ac9a6d8de955661c8a04f5dcd2
+              image: ghcr.io/plannify-truck-driver/driver-job:e1589c18a057ffef67afa580f309fd355293f836
               args: ["generate-documents", "--months-ago", "3"]
               resources:
                 requests:
@@ -213,7 +213,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:055524b450a0c4ac9a6d8de955661c8a04f5dcd2
+              image: ghcr.io/plannify-truck-driver/driver-job:e1589c18a057ffef67afa580f309fd355293f836
               args: ["send-monthly-reports"]
               resources:
                 requests:
@@ -312,7 +312,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:055524b450a0c4ac9a6d8de955661c8a04f5dcd2
+              image: ghcr.io/plannify-truck-driver/driver-job:e1589c18a057ffef67afa580f309fd355293f836
               args: ["purge-deactivated-accounts"]
               resources:
                 requests:
@@ -413,7 +413,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:055524b450a0c4ac9a6d8de955661c8a04f5dcd2
+              image: ghcr.io/plannify-truck-driver/driver-job:e1589c18a057ffef67afa580f309fd355293f836
               args: ["reconcile-documents"]
               resources:
                 requests:
