@@ -9,6 +9,9 @@ spec:
     spec:
       template:
         spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: backup-container
               image: ghcr.io/baptistebronsin/postgres-backup:2.1.0
@@ -19,6 +22,14 @@ spec:
                 limits:
                   memory: "256Mi"
                   cpu: "100m"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
               env:
                 - name: TZ
                   value: "Europe/Paris"
