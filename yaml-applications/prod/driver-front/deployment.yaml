@@ -20,6 +20,9 @@ spec:
       labels:
         app: web-driver-app
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - image: ghcr.io/plannify-truck-driver/web-driver-app:0.4.4
           name: web-driver-app
@@ -54,6 +57,14 @@ spec:
             failureThreshold: 3
             initialDelaySeconds: 5
             periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
