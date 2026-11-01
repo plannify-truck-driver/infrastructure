@@ -20,6 +20,9 @@ spec:
       labels:
         app: driver-api
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: driver-api
           image: ghcr.io/plannify-truck-driver/driver-api:0.5.1
@@ -55,6 +58,14 @@ spec:
               port: 3001
             initialDelaySeconds: 5
             periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
           env:
             - name: RUST_LOG
               value: INFO
