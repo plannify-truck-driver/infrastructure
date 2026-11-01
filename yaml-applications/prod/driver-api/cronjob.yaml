@@ -132,10 +132,10 @@ spec:
                 - "$(GENERATE_REPORTS_AFTER_MONTHS)"
               resources:
                 requests:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "32Mi"
                 limits:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -242,10 +242,10 @@ spec:
               args: ["send-monthly-reports"]
               resources:
                 requests:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "32Mi"
                 limits:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -347,10 +347,10 @@ spec:
               args: ["purge-deactivated-accounts"]
               resources:
                 requests:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "32Mi"
                 limits:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
@@ -457,10 +457,10 @@ spec:
               args: ["reconcile-documents"]
               resources:
                 requests:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "32Mi"
                 limits:
-                  cpu: "10m"
+                  cpu: "100m"
                   memory: "64Mi"
               env:
                 - name: DATABASE_URL
