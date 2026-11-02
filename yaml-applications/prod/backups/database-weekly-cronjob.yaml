@@ -30,6 +30,9 @@ spec:
                 readOnlyRootFilesystem: true
                 runAsNonRoot: true
                 runAsUser: 1000
+              volumeMounts:
+                - name: backup-data
+                  mountPath: /home/backupuser
               env:
                 - name: TZ
                   value: "Europe/Paris"
@@ -88,4 +91,7 @@ spec:
                     secretKeyRef:
                       name: uptime-secrets
                       key: WEEKLY_DATABASE_BACKUP
+          volumes:
+            - name: backup-data
+              emptyDir: {}
           restartPolicy: OnFailure

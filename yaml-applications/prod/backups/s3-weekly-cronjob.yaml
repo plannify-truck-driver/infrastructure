@@ -30,7 +30,12 @@ spec:
                 readOnlyRootFilesystem: true
                 runAsNonRoot: true
                 runAsUser: 1000
+              volumeMounts:
+                - name: backup-data
+                  mountPath: /tmp
               env:
+                - name: LOG_DIR
+                  value: "/tmp/logs/garage-backup"
                 - name: GARAGE_ENDPOINT
                   valueFrom:
                     secretKeyRef:
@@ -92,6 +97,9 @@ spec:
                     secretKeyRef:
                       name: uptime-secrets
                       key: WEEKLY_S3_BACKUP
+          volumes:
+            - name: backup-data
+              emptyDir: {}
           restartPolicy: OnFailure
           imagePullSecrets:
             - name: ghcr-secret
