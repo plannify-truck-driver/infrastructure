@@ -24,7 +24,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - image: ghcr.io/plannify-truck-driver/web-driver-app:0.4.5
+        - image: ghcr.io/plannify-truck-driver/web-driver-app:0.4.6
           name: web-driver-app
           imagePullPolicy: Always
           resources:
