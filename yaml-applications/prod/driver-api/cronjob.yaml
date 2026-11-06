@@ -18,7 +18,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.5.3
+              image: ghcr.io/plannify-truck-driver/driver-job:0.5.4
               args: ["delete-garbage"]
               resources:
                 requests:
@@ -139,7 +139,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.5.3
+              image: ghcr.io/plannify-truck-driver/driver-job:0.5.4
               args:
                 - "generate-documents"
                 - "--months-ago"
@@ -263,7 +263,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.5.3
+              image: ghcr.io/plannify-truck-driver/driver-job:0.5.4
               args: ["send-monthly-reports"]
               resources:
                 requests:
@@ -379,7 +379,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.5.3
+              image: ghcr.io/plannify-truck-driver/driver-job:0.5.4
               args: ["purge-deactivated-accounts"]
               resources:
                 requests:
@@ -500,7 +500,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: job
-              image: ghcr.io/plannify-truck-driver/driver-job:0.5.3
+              image: ghcr.io/plannify-truck-driver/driver-job:0.5.4
               args: ["reconcile-documents"]
               resources:
                 requests:
