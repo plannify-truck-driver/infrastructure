@@ -17,7 +17,8 @@ fullnameOverride: ""
 ## @param namespaceOverride String to override the namespace for all resources
 namespaceOverride: ""
 ## @param commonLabels Labels to add to all deployed objects
-commonLabels: {}
+commonLabels:
+  role: database
 ## @param commonAnnotations Annotations to add to all deployed objects
 commonAnnotations: {}
 ## @param priorityClassName Priority class name to be used for the pods
