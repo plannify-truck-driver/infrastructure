@@ -8,6 +8,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           securityContext:
             seccompProfile:
