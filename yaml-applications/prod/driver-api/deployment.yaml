@@ -19,6 +19,7 @@ spec:
     metadata:
       labels:
         app: driver-api
+        role: backend
     spec:
       securityContext:
         seccompProfile:

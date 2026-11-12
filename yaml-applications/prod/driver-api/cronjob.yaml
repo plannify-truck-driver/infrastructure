@@ -11,6 +11,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
           securityContext:
@@ -132,6 +135,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
           securityContext:
@@ -256,6 +262,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
           securityContext:
@@ -372,6 +381,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
           securityContext:
@@ -493,6 +505,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
           securityContext:
