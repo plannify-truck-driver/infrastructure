@@ -17,6 +17,12 @@ spec:
           podSelector:
             matchLabels:
               role: backend
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: uptime-kuma
       ports:
         - protocol: TCP
           port: 5432
