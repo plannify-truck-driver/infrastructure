@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: company-api
-          image: ghcr.io/plannify-truck-driver/company-api:0.5.5
+          image: ghcr.io/plannify-truck-driver/company-api:73c5609fe3a489b7dd2dba30229e0cb9af87c80d
           imagePullPolicy: Always
           resources:
             requests:
