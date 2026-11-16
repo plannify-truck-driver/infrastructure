@@ -11,8 +11,14 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: job
               image: ghcr.io/plannify-truck-driver/driver-job:85abbae297ab667b9c16d87b12007ba247144e5d
@@ -24,6 +30,14 @@ spec:
                 limits:
                   cpu: "100m"
                   memory: "64Mi"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
               env:
                 - name: DATABASE_URL
                   valueFrom:
@@ -110,8 +124,14 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: job
               image: ghcr.io/plannify-truck-driver/driver-job:85abbae297ab667b9c16d87b12007ba247144e5d
@@ -123,6 +143,14 @@ spec:
                 limits:
                   cpu: "100m"
                   memory: "64Mi"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
               env:
                 - name: DATABASE_URL
                   valueFrom:
@@ -209,8 +237,14 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: job
               image: ghcr.io/plannify-truck-driver/driver-job:85abbae297ab667b9c16d87b12007ba247144e5d
@@ -222,6 +256,14 @@ spec:
                 limits:
                   cpu: "100m"
                   memory: "64Mi"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
               env:
                 - name: DATABASE_URL
                   valueFrom:
@@ -308,8 +350,14 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: job
               image: ghcr.io/plannify-truck-driver/driver-job:85abbae297ab667b9c16d87b12007ba247144e5d
@@ -321,6 +369,14 @@ spec:
                 limits:
                   cpu: "100m"
                   memory: "64Mi"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
               env:
                 - name: DATABASE_URL
                   valueFrom:
@@ -409,8 +465,14 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            role: backend
         spec:
           restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
             - name: job
               image: ghcr.io/plannify-truck-driver/driver-job:85abbae297ab667b9c16d87b12007ba247144e5d
@@ -422,6 +484,14 @@ spec:
                 limits:
                   cpu: "100m"
                   memory: "64Mi"
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
               env:
                 - name: DATABASE_URL
                   valueFrom:

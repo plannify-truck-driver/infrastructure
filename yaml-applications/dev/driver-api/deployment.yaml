@@ -19,7 +19,11 @@ spec:
     metadata:
       labels:
         app: plannify-dev-driver-api
+        role: backend
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: plannify-dev-driver-api
           image: ghcr.io/plannify-truck-driver/driver-api:85abbae297ab667b9c16d87b12007ba247144e5d
@@ -53,6 +57,14 @@ spec:
               port: 3001
             initialDelaySeconds: 5
             periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
           env:
             - name: RUST_LOG
               value: DEBUG

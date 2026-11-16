@@ -21,6 +21,9 @@ spec:
       labels:
         app: plannify-dev-web-driver-app
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - image: ghcr.io/plannify-truck-driver/web-driver-app:9db3c177c743422230ffa75a904f0b475708d726
           name: plannify-dev-web-driver-app
@@ -55,6 +58,22 @@ spec:
             failureThreshold: 3
             initialDelaySeconds: 5
             periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 16Mi
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
