@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: plannify-dev-driver-api
-          image: ghcr.io/plannify-truck-driver/driver-api:0aaab683edd3c31c9cf592a4aad9b291d9a2738a
+          image: ghcr.io/plannify-truck-driver/driver-api:4ee872674b2c85633f8ee73a92648106c46c79c9
           imagePullPolicy: Always
           resources:
             requests:
